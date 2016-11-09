@@ -18,6 +18,7 @@
 #include "Locomotor.h"
 #include "torso.h"
 #include "RobotPart.h"
+#include "customer.h"
 
 
 //
@@ -41,6 +42,40 @@ void CloseCB(Fl_Widget* w, void* p) {
 	if (selection == 1) {
 		win->hide();
 	}
+}
+
+void createcust(Fl_Widget* w, void* p) {
+
+	Shoppe shoppe;
+
+	string t1 = string{ fl_input("Enter the customer's name.", 0) };
+	string t2 = string{ fl_input("Enter the customer's number.", 0) };
+	string t3 = string{ fl_input("Enter a sales associate's number.", 0) };
+
+	 
+	int c_num = stoi(t2);
+	int s_num = stoi(t3);
+	shoppe.add_customer(new Customer(t1,c_num,s_num));
+
+
+	//shoppe.create_newpart(new Head(part_num, weight, cost, t5, quantity), 1);
+
+}
+
+void createsa(Fl_Widget* w, void* p) {
+
+	Shoppe shoppe;
+
+	string t1 = string{ fl_input("Enter the sales associate's name.", 0) };
+	string t2 = string{ fl_input("Enter the sales associate's number.", 0) };
+
+
+	int sa_num = stoi(t2);
+	shoppe.add_sa(new SalesAssociate(t1, sa_num));
+
+
+	//shoppe.create_newpart(new Head(part_num, weight, cost, t5, quantity), 1);
+
 }
 
 void headbox(Fl_Widget* w, void* p) {
@@ -164,8 +199,8 @@ Fl_Menu_Item menuitems[] = {
 
 { "&Create", 0, 0, 0, FL_SUBMENU },
 	{ "Order", 0,0,0,FL_MENU_DIVIDER },
-	{ "Customer" },
-	{ "Sales Associate", 0,0,0,FL_MENU_DIVIDER },
+	{ "Customer", 0, (Fl_Callback *)createcust },
+	{ "Sales Associate", 0,(Fl_Callback *)createsa,0,FL_MENU_DIVIDER },
 	{ "&Robot Part", 0, 0, 0, FL_SUBMENU},
 		{ "Robot Arm", 0, (Fl_Callback *)armbox },
 		{ "Robot Battery", 0, (Fl_Callback *)battbox },
