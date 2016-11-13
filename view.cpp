@@ -17,3 +17,10 @@ void View::draw() {
 bool View::saved() {
 	return !dirty;
 }
+
+void View::new_program() { lines.clear(); dirty = false; }
+
+
+bool View::dataDownload() {
+	return !dirty;
+}

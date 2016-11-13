@@ -8,6 +8,9 @@
 #include <FL/fl_ask.H>
 #include <Fl/Fl_PNG_Image.H>
 #include <Fl/Fl_JPEG_Image.H>
+#include <FL/fl_ask.H>
+#include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Text_Buffer.H>
 
 #include <iostream>
 #include <string>
@@ -26,9 +29,9 @@
 //
 // Widgets
 //
-Fl_Window *win;
+Fl_Window *win, *custView, *test;
 Fl_Menu_Bar *menubar;
-Fl_Box *box;
+Fl_Box *box, *EventBox;
 Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7;
 View *view;
 //Fl_Box *pngbox;
@@ -37,9 +40,77 @@ Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
 
 
+
 //
 // Callbacks
 //
+
+int customer_View(Fl_Widget* w, void* p) {
+	const int X = 800;
+	const int Y = 600;
+	const int border = 10;
+	Shoppe shoppe;
+	test = new Fl_Window{ X, Y, "Robot Shoppe" };
+
+	view = new View{ 0, 0, X, Y };
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	test->resizable(*view);
+
+	shoppe.list_cust();
+
+
+	// Wrap it up and let FLTK do its thing
+	test->end();
+	test->show();
+	return(Fl::run());
+	
+	//Shoppe shoppe;
+
+/*	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40, "Display");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text("line 0\nline 1\nline 2\n"
+		"line 3\nline 4\nline 5\n"
+		"line 6\nline 7\nline 8\n"
+		"line 9\nline 10\nline 11\n"
+		"line 12\nline 13\nline 14\n"
+		"line 15\nline 16\nline 17\n"
+		"line 18\nline 19\nline 20\n"
+		"line 21\nline 22\nline 23\n");
+
+	//view->redraw();
+	*/
+
+	//shoppe.list_cust();
+	
+
+	
+}
+
+void SaveCB(Fl_Widget* w, void* p) {
+	int selection = 1;
+	Shoppe shoppe;
+	if (!view->dataDownload()) {
+		selection = fl_choice("Are you sure you want to save the shoppe data?", fl_no, fl_yes, 0);
+	}
+	if (selection == 1) {
+		shoppe.save_info();
+	}
+}
+
+void NewCB(Fl_Widget* w, void* p) {
+	view->new_program();
+	view->damage(FL_DAMAGE_ALL);
+	view->redraw();
+	Fl::check();
+}
+
+
+
 void CloseCB(Fl_Widget* w, void* p) {
 	int selection = 1;
 	if (!view->saved()) {
@@ -49,6 +120,8 @@ void CloseCB(Fl_Widget* w, void* p) {
 		win->hide();
 	}
 }
+
+
 
 void createcust(Fl_Widget* w, void* p) {
 
@@ -65,6 +138,10 @@ void createcust(Fl_Widget* w, void* p) {
 
 
 	//shoppe.create_newpart(new Head(part_num, weight, cost, t5, quantity), 1);
+
+}
+
+void createModel(Fl_Widget* w, void* p) {
 
 }
 
@@ -185,14 +262,16 @@ void torsobox(Fl_Widget* w, void* p) {
 
 	shoppe.create_newpart(new Torso(part_num, weight, cost, t6, batt_count, quantity), 5);
 }
+
+
 //
 // Menu
 //
 Fl_Menu_Item menuitems[] = {
 { "&File", 0, 0, 0, FL_SUBMENU },
-	{"&New", FL_ALT + 'n'},
+	{"&New", FL_ALT + 'n', (Fl_Callback *)NewCB },
 	{"&Open", FL_ALT + 'o'},
-	{"&Save", FL_ALT + 's' },
+	{"&Save", FL_ALT + 's', (Fl_Callback *)SaveCB },
 	{ "&Quit", FL_ALT + 'q', (Fl_Callback *)CloseCB },
 	{ 0 },
 
@@ -222,7 +301,7 @@ Fl_Menu_Item menuitems[] = {
 	{ "All Orders" },
 	{ "Orders by Customer" },
 	{ "Orders by Sales Associate", 0,0,0,FL_MENU_DIVIDER },
-	{ "All Customers" },
+	{ "All Customers", 0, (Fl_Callback *)customer_View },
 	{ "All Sales Associates" , 0,0,0,FL_MENU_DIVIDER },
 	{ "All Robot Models" },
 	{ "All Robot Parts" },

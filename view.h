@@ -11,6 +11,7 @@ using namespace std;
 class View : public Fl_Box {
 	vector<Line> lines;
 	bool dirty = true; // set true to demo Exit dialog
+	bool saveData = true;
 public:
 	// Call base constructor
 	View(int X, int Y, int W, int H)
@@ -19,6 +20,8 @@ public:
 	void draw() override;
 	// Determine if any lines haven't been saved
 	bool saved();
+	bool dataDownload();
+	void new_program();
 
 	
 };
