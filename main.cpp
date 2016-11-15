@@ -23,6 +23,7 @@
 #include "torso.h"
 #include "RobotPart.h"
 #include "customer.h"
+#include "sales_associate.h"
 
 
 //
@@ -39,6 +40,10 @@ void cancel_locoCB(Fl_Widget* w, void* p);
 void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
 
+void create_custCB(Fl_Widget* w, void* p);
+void cancel_custCB(Fl_Widget* w, void* p);
+void create_saCB(Fl_Widget* w, void* p);
+void cancel_saCB(Fl_Widget* w, void* p);
 
 class Robot_Part_Dialog;
 class Head_Dialog;
@@ -46,6 +51,9 @@ class Arm_Dialog;
 class Battery_Dialog;
 class Locomotor_Dialog;
 class Torso_Dialog;
+
+class Customer_Dialog;
+class SalesAssociate_Dialog;
 
 //
 // Widgets
@@ -63,6 +71,9 @@ Arm_Dialog *arm_dlg;
 Battery_Dialog *batt_dlg;
 Locomotor_Dialog *loco_dlg;
 Torso_Dialog *torso_dlg;
+
+Customer_Dialog *cust_dlg;
+SalesAssociate_Dialog *sa_dlg;
 
 //
 // Robot Part Dialogs
@@ -348,6 +359,87 @@ public:
 		Fl_Input *rp_batt_count;
 		};
 
+
+// Customer Dialog
+class Customer_Dialog {
+public:
+	Customer_Dialog() {
+
+		dialog = new Fl_Window(340, 150, "Customer");
+
+		c_name = new Fl_Input(120, 10, 210, 25, "Name:");
+		c_name->align(FL_ALIGN_LEFT);
+
+		c_num = new Fl_Input(120, 40, 210, 25, "Number:");
+		c_num->align(FL_ALIGN_LEFT);
+
+		sa_num = new Fl_Input(120, 70, 210, 25, "Sales Associate\nNumber:");
+		sa_num->align(FL_ALIGN_LEFT);
+
+		c_create = new Fl_Return_Button(145, 120, 120, 25, "Create");
+		c_create->callback((Fl_Callback *)create_custCB, 0);
+
+		c_cancel = new Fl_Button(270, 120, 60, 25, "Cancel");
+		c_cancel->callback((Fl_Callback *)cancel_custCB, 0);
+
+		dialog->end();
+		dialog->set_non_modal();
+	}
+
+	void show() { dialog->show(); }
+	void hide() { dialog->hide(); }
+	string cust_name() { return c_name->value(); }
+	string cust_number() { return c_num->value(); }
+	string sa_number() { return sa_num->value(); }
+
+private:
+	Fl_Window *dialog;
+	Fl_Input *c_name;
+	Fl_Input *c_num;
+	Fl_Input *sa_num;
+
+	Fl_Return_Button *c_create;
+	Fl_Button *c_cancel;
+};
+
+// Sales Associate Dialog
+class SalesAssociate_Dialog {
+public:
+	SalesAssociate_Dialog() {
+
+		dialog = new Fl_Window(340, 130, "Sales Associate");
+
+		sa_name = new Fl_Input(120, 10, 210, 25, "Name:");
+		sa_name->align(FL_ALIGN_LEFT);
+
+		sa_num = new Fl_Input(120, 40, 210, 25, "Number:");
+		sa_num->align(FL_ALIGN_LEFT);
+
+		sa_create = new Fl_Return_Button(145, 100, 120, 25, "Create");
+		sa_create->callback((Fl_Callback *)create_saCB, 0);
+
+		sa_cancel = new Fl_Button(270, 100, 60, 25, "Cancel");
+		sa_cancel->callback((Fl_Callback *)cancel_saCB, 0);
+
+		dialog->end();
+		dialog->set_non_modal();
+	}
+
+	void show() { dialog->show(); }
+	void hide() { dialog->hide(); }
+	string SA_name() { return sa_name->value(); }
+	string sa_number() { return sa_num->value(); }
+
+private:
+	Fl_Window *dialog;
+	Fl_Input *sa_name;
+	Fl_Input *sa_num;
+
+	Fl_Return_Button *sa_create;
+	Fl_Button *sa_cancel;
+};
+
+
 //
 // Callbacks
 //
@@ -378,6 +470,12 @@ void menu_create_torsoCB(Fl_Widget* w, void* p) {
 	torso_dlg->show();
 }
 
+void menu_create_custCB(Fl_Widget* w, void* p) {
+	cust_dlg->show();
+}
+void menu_create_saCB(Fl_Widget* w, void* p) {
+	sa_dlg->show();
+}
 // cancel callback functions
 void cancel_headCB(Fl_Widget* w, void* p) {
 	head_dlg->hide();
@@ -395,6 +493,12 @@ void cancel_torsoCB(Fl_Widget* w, void* p) {
 	torso_dlg->hide();
 }
 
+void cancel_custCB(Fl_Widget* w, void* p) {
+	cust_dlg->hide();
+}
+void cancel_saCB(Fl_Widget* w, void* p) {
+	sa_dlg->hide();
+}
 // create callback functions
 void create_headCB(Fl_Widget* w, void* p) {
 
@@ -463,38 +567,26 @@ void create_torsoCB(Fl_Widget* w, void* p) {
 }
 
 
-//...
-void createcust(Fl_Widget* w, void* p) {
+void create_custCB(Fl_Widget* w, void* p) {
 
 	Shoppe shoppe;
+	int c_num = stoi(cust_dlg->cust_number());
+	int s_num = stoi(cust_dlg->sa_number());
 
-	string t1 = string{ fl_input("Enter the customer's name.", 0) };
-	string t2 = string{ fl_input("Enter the customer's number.", 0) };
-	string t3 = string{ fl_input("Enter a sales associate's number.", 0) };
+	shoppe.add_customer(new Customer(cust_dlg->cust_name(), c_num, s_num));
 
-
-	int c_num = stoi(t2);
-	int s_num = stoi(t3);
-	shoppe.add_customer(new Customer(t1, c_num, s_num));
-
-
-	//shoppe.create_newpart(new Head(part_num, weight, cost, t5, quantity), 1);
+	cust_dlg->hide();
 
 }
 
-void createsa(Fl_Widget* w, void* p) {
+void create_saCB(Fl_Widget* w, void* p) {
 
 	Shoppe shoppe;
+	int sa_num = stoi(sa_dlg->sa_number());
 
-	string t1 = string{ fl_input("Enter the sales associate's name.", 0) };
-	string t2 = string{ fl_input("Enter the sales associate's number.", 0) };
+	shoppe.add_sa(new SalesAssociate(sa_dlg->SA_name(), sa_num));
 
-
-	int sa_num = stoi(t2);
-	shoppe.add_sa(new SalesAssociate(t1, sa_num));
-
-
-	//shoppe.create_newpart(new Head(part_num, weight, cost, t5, quantity), 1);
+	sa_dlg->hide();
 
 }
 
@@ -519,8 +611,8 @@ Fl_Menu_Item menuitems[] = {
 
 { "&Create", 0, 0, 0, FL_SUBMENU },
 	{ "Order", 0,0,0,FL_MENU_DIVIDER },
-	{ "Customer", 0, (Fl_Callback *)createcust },
-	{ "Sales Associate", 0,(Fl_Callback *)createsa,0,FL_MENU_DIVIDER },
+	{ "Customer", 0, (Fl_Callback *)menu_create_custCB },
+	{ "Sales Associate", 0,(Fl_Callback *)menu_create_saCB,0,FL_MENU_DIVIDER },
 	{ "&Robot Part", 0, 0, 0, FL_SUBMENU},
 		{ "Robot Head", 0, (Fl_Callback *)menu_create_headCB },
 		{ "Robot Arm", 0, (Fl_Callback *)menu_create_armCB},
@@ -570,6 +662,8 @@ int main() {
 	batt_dlg = new Battery_Dialog{};
 	loco_dlg = new Locomotor_Dialog{};
 	torso_dlg = new Torso_Dialog{};
+	cust_dlg = new Customer_Dialog{};
+	sa_dlg = new SalesAssociate_Dialog{};
 
 	// Create a window and box
 	win = new Fl_Window{ X, Y, "Robot Shoppe" };
