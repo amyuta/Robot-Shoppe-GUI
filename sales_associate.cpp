@@ -3,9 +3,12 @@
 #include <fstream>
 using namespace std;
 
-void SalesAssociate::list_all_detail(){
+string SalesAssociate::get_info(){
     
-    cout << name << " " <<number;
+	string allDetails;
+
+	allDetails = name + "\n    Sales Associate #: " + number;
+	return allDetails;
     
 }
 
@@ -18,6 +21,17 @@ void SalesAssociate::save_all(){
     ofs << name << endl;
     
     ofs.close();
+}
+
+void SalesAssociate::save_as_all(string filename) {
+
+	ofstream ofs;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);
+
+	ofs << number << endl;
+	ofs << name << endl;
+
+	ofs.close();
 }
 
 void SalesAssociate::raisecheck(){

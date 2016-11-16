@@ -16,7 +16,27 @@ void Customer::save_all(){
 
             ofs.close();
 }
-void Customer::list_all_detail(){
-    
-    cout << name << " " <<number;
+
+void Customer::save_as_all(string filename) {
+
+	ofstream ofs;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);
+
+	ofs << number << endl;
+	ofs << name << endl;
+	ofs << sales_a << endl;
+
+	ofs.close();
 }
+
+
+string Customer::get_info() {
+
+	string allDetails;
+
+	allDetails = name + "\n    Customer #: " + number + "\n    Sales Associate #: " + sales_a;
+	return allDetails;
+}
+
+
+

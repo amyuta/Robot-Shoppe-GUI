@@ -179,15 +179,17 @@ void Shoppe::add_sa(SalesAssociate* sa){
 }
 
 
-void Shoppe::list_sa(){
-    int i = 0;
-    while (i < sales_a.size()) {
-        
-        cout << "(" << i+1 << ") ";
-        sales_a[i]->list_all_detail();
-        i++;
-    }
-    
+string Shoppe::list_sa(){
+	int i = 0;
+	string allCust = "";
+
+	while (i < sales_a.size()) {
+
+		allCust = allCust + sales_a[i]->get_info() + "\n";
+		i++;
+	}
+
+	return allCust;
 }
 void Shoppe::sa_raisecheck(int sa){
     
@@ -261,15 +263,90 @@ void Shoppe::add_customer(Customer* customer) {
   customers.push_back(customer);
 }
 
-void Shoppe::list_cust(){
+
+
+string Shoppe::list_cust(){
     
     int i = 0;
-    while (i < customers.size()) {
-        
-        cout << "(" << i+1 << ") ";
-        customers[i]->list_all_detail();
+	string allCust = "";
+
+    while (i < customers.size()) {   
+     
+		allCust = allCust +customers[i]->get_info() + "\n";
         i++;
     }
+
+	return allCust;
+}
+
+int Shoppe::searchfor_part(int type, int num){
+
+    int i = 0, pnum;
+
+    if (type == 1) {
+
+        while (i < head.size()) {
+                pnum = head[i]->get_pnum();
+            if (pnum == num) {
+                return i;
+            }
+            i++;
+        }
+    }
+
+    i = 0;
+
+    if (type == 2) {
+
+        while (i < arm.size()) {
+                pnum = arm[i]->get_pnum();
+            if (pnum == num) {
+                return i;
+            }
+            i++;
+        }
+    }
+
+    i = 0;
+
+    if (type == 3) {
+
+        while (i < battery.size()) {
+                pnum = battery[i]->get_pnum();
+            if ( pnum == num) {
+                return i;
+            }
+            i++;
+        }
+    }
+
+    i = 0;
+
+    if (type == 4) {
+
+        while (i < loco.size()) {
+                pnum = loco[i]->get_pnum();
+            if (pnum == num) {
+                return i;
+            }
+            i++;
+        }
+    }
+
+    i = 0;
+
+    if (type == 5) {
+
+        while (i < torso.size()) {
+                pnum = torso[i]->get_pnum();
+            if ( pnum == num) {
+                return i;
+            }
+            i++;
+        }
+    }
+
+    return 0;
 }
 
 void Shoppe::save_info(){
@@ -375,75 +452,105 @@ void Shoppe::save_info(){
 
 }
 
-int Shoppe::searchfor_part(int type, int num){
+void Shoppe::save_as_info(string filename) {
 
-    int i = 0, pnum;
 
-    if (type == 1) {
 
-        while (i < head.size()) {
-                pnum = head[i]->get_pnum();
-            if (pnum == num) {
-                return i;
-            }
-            i++;
-        }
-    }
+	cout << "Please wait while we save...\n";
+	int i = 0;
 
-    i = 0;
+	ofstream ofs;
+	ofs.open(filename.c_str());   //print the head count for the loading process.
+	ofs << head.size() << endl;
+	ofs.close();
 
-    if (type == 2) {
+	while (i < head.size()) {
+		head[i]->save_as_all(filename);
+		i++;
+	}
 
-        while (i < arm.size()) {
-                pnum = arm[i]->get_pnum();
-            if (pnum == num) {
-                return i;
-            }
-            i++;
-        }
-    }
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);   //print the arm count for the loading process.
+	ofs << arm.size() << endl;
+	ofs.close();
 
-    i = 0;
+	while (i < arm.size()) {
+		arm[i]->save_as_all(filename);
+		i++;
+	}
 
-    if (type == 3) {
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);   //print the battery count for the loading process.
+	ofs << battery.size() << endl;
+	ofs.close();
 
-        while (i < battery.size()) {
-                pnum = battery[i]->get_pnum();
-            if ( pnum == num) {
-                return i;
-            }
-            i++;
-        }
-    }
+	while (i < battery.size()) {
+		battery[i]->save_as_all(filename);
+		i++;
+	}
 
-    i = 0;
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);   //print the loco count for the loading process.
+	ofs << loco.size() << endl;
+	ofs.close();
 
-    if (type == 4) {
+	while (i < loco.size()) {
+		loco[i]->save_as_all(filename);
+		i++;
+	}
 
-        while (i < loco.size()) {
-                pnum = loco[i]->get_pnum();
-            if (pnum == num) {
-                return i;
-            }
-            i++;
-        }
-    }
 
-    i = 0;
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);   //print the torso count for the loading process.
+	ofs << torso.size() << endl;
+	ofs.close();
 
-    if (type == 5) {
+	while (i < torso.size()) {
+		torso[i]->save_as_all(filename);
+		i++;
+	}
 
-        while (i < torso.size()) {
-                pnum = torso[i]->get_pnum();
-            if ( pnum == num) {
-                return i;
-            }
-            i++;
-        }
-    }
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app); //print the customer count for loading
+	ofs << customers.size() << endl;
+	ofs.close();
 
-    return 0;
+	while (i < customers.size()) {
+		customers[i]->save_as_all(filename);
+		i++;
+	}
+
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app); //print the sa count for loading
+	ofs << sales_a.size() << endl;
+	ofs.close();
+
+	while (i < sales_a.size()) {
+		sales_a[i]->save_as_all(filename);
+		i++;
+	}
+
+	i = 0;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app); //print the model count for the loading
+	ofs << robot_models.size() << endl;
+	ofs.close();
+
+	while (i < robot_models.size()) {
+		robot_models[i].save_as_alls(filename);
+		i++;
+	}
+
+	/*
+	i = 0;
+	ofs.open("data.txt", ofstream::out | ofstream::app); //print the order count for the loading
+	ofs << orders.size() << endl;
+	ofs.close();
+
+	while (i < orders.size()) {
+	orders[i]->save_all();
+	i++;
+	}
+	*/
+
+
 }
-
-
-

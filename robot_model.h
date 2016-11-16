@@ -15,6 +15,7 @@ public:
     void show_model();
     double get_price();
     virtual void save_alls();
+	virtual void save_as_alls(string filename);
     
 
 protected:

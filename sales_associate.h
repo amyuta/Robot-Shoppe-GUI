@@ -7,15 +7,16 @@ using namespace std;
 class SalesAssociate {
 
 public:
-    SalesAssociate(string sa_name, int sa_num) : name(sa_name), number(sa_num) {}
+    SalesAssociate(string sa_name, string sa_num) : name(sa_name), number(sa_num) {}
     void save_all();
-    void list_all_detail();
+	void save_as_all(string filename);
+    string get_info();
     void raisecheck();
     void raise_final();
     
 private:
     string name;
-    int number;
+    string number;
     bool raise_check = false;
     bool raise = false;
 

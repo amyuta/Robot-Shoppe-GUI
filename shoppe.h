@@ -26,12 +26,12 @@ public:
     void add_to_parts(int type, int quantity, int part_num);
     
     //method to list all sales associate
-    void list_sa();
+    string list_sa();
     void sa_raisecheck(int sa);
     void pb_raise(int sa);
     
     //method to list all customers
-    void list_cust();
+    string list_cust();
     
     //methods to make/show models
     void make_model(int type1, int type2, int type3, int type4, int type5, int mod_num, string mod_name);
@@ -47,6 +47,7 @@ public:
     
     //save
     void save_info();
+	void save_as_info(string filename);
 
     int type;
 

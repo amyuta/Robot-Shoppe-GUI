@@ -61,3 +61,23 @@ void Robot_Model:: save_alls() {
 
 
 }
+
+void Robot_Model::save_as_alls(string filename) {
+
+	ofstream ofs;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);
+
+	ofs << name << endl;
+	ofs << model_num << endl;
+	ofs << price << endl;
+
+	ofs.close();
+
+	parts[0].save_as_all(filename);
+	parts[1].save_as_all(filename);
+	parts[2].save_as_all(filename);
+	parts[3].save_as_all(filename);
+	parts[4].save_as_all(filename);
+
+
+}

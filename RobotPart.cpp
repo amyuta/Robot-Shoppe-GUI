@@ -50,6 +50,21 @@ void RobotPart::save_all() {
             ofs.close();
 
 }
+
+void RobotPart::save_as_all(string filename) {
+
+	ofstream ofs;
+	ofs.open(filename.c_str(), ofstream::out | ofstream::app);
+
+	ofs << p_num << endl;
+	ofs << p_weight << endl;
+	ofs << p_cost << endl;
+	ofs << p_quantity << endl;
+	ofs << p_description << endl;
+
+	ofs.close();
+
+}
 int RobotPart::quan_count(){
     return p_quantity;
 }

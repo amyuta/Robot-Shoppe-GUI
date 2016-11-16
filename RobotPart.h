@@ -28,6 +28,7 @@ public:
     
     virtual int quan_count();
     virtual void save_all();
+	virtual void save_as_all(string filename);
 
 
 };

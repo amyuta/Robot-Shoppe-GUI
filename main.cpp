@@ -5,6 +5,7 @@
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Text_Display.H>
+#include <FL/Fl_Text_Buffer.H>
 #include <FL/fl_ask.H>
 #include <Fl/Fl_PNG_Image.H>
 #include <Fl/Fl_JPEG_Image.H>
@@ -58,7 +59,7 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win;
+Fl_Window *win, *custReports, *saReports;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
 Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7;
@@ -74,6 +75,7 @@ Torso_Dialog *torso_dlg;
 
 Customer_Dialog *cust_dlg;
 SalesAssociate_Dialog *sa_dlg;
+Shoppe shoppe;
 
 //
 // Robot Part Dialogs
@@ -443,6 +445,68 @@ private:
 //
 // Callbacks
 //
+int sa_View(Fl_Widget* w, void* p) {
+	const int X = 800;
+	const int Y = 600;
+	const int border = 10;
+
+	saReports = new Fl_Window{ X, Y, "Robot Shoppe" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	saReports->resizable(*view);
+
+	//Turn string into Char array
+	string AllSa = shoppe.list_sa();
+	char *testing = new char[AllSa.length() + 1];
+	strcpy(testing, AllSa.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40, "Sales Associate List");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	// Wrap it up and let FLTK do its thing
+	saReports->end();
+	saReports->show();
+	return(Fl::run());
+}
+
+int customer_View(Fl_Widget* w, void* p) {
+	const int X = 800;
+	const int Y = 600;
+	const int border = 10;
+	
+	custReports = new Fl_Window{ X, Y, "Robot Shoppe" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	custReports->resizable(*view);
+	
+	//Turn string into Char array
+	string AllCusts = shoppe.list_cust();
+	char *testing = new char[AllCusts.length() + 1];
+	strcpy(testing, AllCusts.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40, "Customer List");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+	
+	// Wrap it up and let FLTK do its thing
+	custReports->end();
+	custReports->show();
+	return(Fl::run());
+}
+
 void CloseCB(Fl_Widget* w, void* p) {
 	int selection = 1;
 	if (!view->saved()) {
@@ -502,7 +566,7 @@ void cancel_saCB(Fl_Widget* w, void* p) {
 // create callback functions
 void create_headCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
+	
 	int part_num = stoi(head_dlg->part_number());
 	int weight = stoi(head_dlg->weight());
 	int cost = stoi(head_dlg->cost());
@@ -514,7 +578,7 @@ void create_headCB(Fl_Widget* w, void* p) {
 }
 void create_armCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
+	
 	int part_num = stoi(arm_dlg->part_number());
 	int weight = stoi(arm_dlg->weight());
 	int cost = stoi(arm_dlg->cost());
@@ -527,7 +591,7 @@ void create_armCB(Fl_Widget* w, void* p) {
 }
 void create_battCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
+	
 	int part_num = stoi(batt_dlg->part_number());
 	int weight = stoi(batt_dlg->weight());
 	int cost = stoi(batt_dlg->cost());
@@ -540,7 +604,7 @@ void create_battCB(Fl_Widget* w, void* p) {
 }
 void create_locoCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
+	
 	int part_num = stoi(loco_dlg->part_number());
 	int weight = stoi(loco_dlg->weight());
 	int cost = stoi(loco_dlg->cost());
@@ -554,7 +618,7 @@ void create_locoCB(Fl_Widget* w, void* p) {
 }
 void create_torsoCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
+	
 	int part_num = stoi(torso_dlg->part_number());
 	int weight = stoi(torso_dlg->weight());
 	int cost = stoi(torso_dlg->cost());
@@ -569,11 +633,9 @@ void create_torsoCB(Fl_Widget* w, void* p) {
 
 void create_custCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
-	int c_num = stoi(cust_dlg->cust_number());
-	int s_num = stoi(cust_dlg->sa_number());
+	
 
-	shoppe.add_customer(new Customer(cust_dlg->cust_name(), c_num, s_num));
+	shoppe.add_customer(new Customer(cust_dlg->cust_name(), cust_dlg->cust_number(), cust_dlg->sa_number()));
 
 	cust_dlg->hide();
 
@@ -581,14 +643,32 @@ void create_custCB(Fl_Widget* w, void* p) {
 
 void create_saCB(Fl_Widget* w, void* p) {
 
-	Shoppe shoppe;
-	int sa_num = stoi(sa_dlg->sa_number());
 
-	shoppe.add_sa(new SalesAssociate(sa_dlg->SA_name(), sa_num));
+	shoppe.add_sa(new SalesAssociate(sa_dlg->SA_name(), sa_dlg->sa_number()));
 
 	sa_dlg->hide();
 
 }
+
+void SaveCB(Fl_Widget* w, void* p) {
+	int selection = 1;
+	if (!view->dataDownload()) {
+		selection = fl_choice("Are you sure you want to save the shoppe data?", fl_no, fl_yes, 0);
+	}
+	if (selection == 1) {
+		shoppe.save_info();
+	}
+}
+
+void SaveAsCB(Fl_Widget* w, void* p) {
+	int selection = 1;
+	string t1 = string{ fl_input("Enter a filename with extension.", 0) };
+	
+	if (selection == 1) {
+		shoppe.save_as_info(t1);
+	}
+}
+
 
 
 //
@@ -598,7 +678,8 @@ Fl_Menu_Item menuitems[] = {
 { "&File", 0, 0, 0, FL_SUBMENU },
 	{"&New", FL_ALT + 'n'},
 	{"&Open", FL_ALT + 'o'},
-	{"&Save", FL_ALT + 's' },
+	{"&Save to Default", FL_ALT + 's', (Fl_Callback *)SaveCB },
+	{ "&Save to New", 0, (Fl_Callback *)SaveAsCB },
 	{ "&Quit", FL_ALT + 'q', (Fl_Callback *)CloseCB },
 	{ 0 },
 
@@ -628,8 +709,8 @@ Fl_Menu_Item menuitems[] = {
 	{ "All Orders" },
 	{ "Orders by Customer" },
 	{ "Orders by Sales Associate", 0,0,0,FL_MENU_DIVIDER },
-	{ "All Customers" },
-	{ "All Sales Associates" , 0,0,0,FL_MENU_DIVIDER },
+	{ "All Customers", 0, (Fl_Callback *)customer_View},
+	{ "All Sales Associates" , 0,(Fl_Callback *)sa_View,0,FL_MENU_DIVIDER },
 	{ "All Robot Models" },
 	{ "All Robot Parts" },
 	{ 0 },
@@ -651,7 +732,7 @@ Fl_Menu_Item menuitems[] = {
 // Main
 //
 int main() {
-	Shoppe shoppe;
+	
 	const int X = 800;
 	const int Y = 600;
 	const int border = 10;
