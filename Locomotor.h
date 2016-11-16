@@ -12,6 +12,8 @@ public:
     Locomotor(int part_num, double weight, double cost, string description, int power, int max_speed, int quantity) : p_power(power), p_maxspeed(max_speed), RobotPart(part_num, weight, cost, description, quantity){}
 
    virtual void save_all(); 
+   virtual void save_as_all(string filename);
+
     double find_maxspeed();
     double find_powerconsumed();
     //need to create a .cpp file
