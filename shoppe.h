@@ -18,6 +18,7 @@ public:
     void add_customer(Customer* customer);
     void add_sa(SalesAssociate* sa);
     void create_newpart(RobotPart* part, int type);
+	string all_parts();
     
     //methods to list/check/add parts
     void list_part_details(int type);
@@ -34,7 +35,7 @@ public:
     string list_cust();
     
     //methods to make/show models
-    void make_model(int type1, int type2, int type3, int type4, int type5, int mod_num, string mod_name);
+    void make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name);
     void show_models();
     int searchfor_part(int type, int num);
     

@@ -9,7 +9,7 @@
 
 class Head: public RobotPart {
 public:
-    Head(int part_num, double weight, double cost, string description, int quantity) : RobotPart(part_num, weight, cost, description, quantity){}
+    Head(string part_num, double weight, double cost, string description, int quantity) : RobotPart(part_num, weight, cost, description, quantity){}
     
     
 

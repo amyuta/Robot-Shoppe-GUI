@@ -9,7 +9,7 @@
 
 class Arm :public RobotPart {
 public:
-	Arm(int part_num, double weight, double cost, string description, int power, int quantity) : RobotPart(part_num, weight, cost, description, quantity), p_power(power) {}
+	Arm(string part_num, double weight, double cost, string description, int power, int quantity) : RobotPart(part_num, weight, cost, description, quantity), p_power(power) {}
 
 	virtual void save_all();
 	virtual void save_as_all(string filename);

@@ -41,6 +41,9 @@ void cancel_locoCB(Fl_Widget* w, void* p);
 void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
 
+void create_modelCB(Fl_Widget* w, void* p);
+void cancel_modelCB(Fl_Widget* w, void* p);
+
 void create_custCB(Fl_Widget* w, void* p);
 void cancel_custCB(Fl_Widget* w, void* p);
 void create_saCB(Fl_Widget* w, void* p);
@@ -52,6 +55,7 @@ class Arm_Dialog;
 class Battery_Dialog;
 class Locomotor_Dialog;
 class Torso_Dialog;
+class Model_Dialog;
 
 class Customer_Dialog;
 class SalesAssociate_Dialog;
@@ -72,6 +76,7 @@ Arm_Dialog *arm_dlg;
 Battery_Dialog *batt_dlg;
 Locomotor_Dialog *loco_dlg;
 Torso_Dialog *torso_dlg;
+Model_Dialog *model_dlg;
 
 Customer_Dialog *cust_dlg;
 SalesAssociate_Dialog *sa_dlg;
@@ -80,6 +85,81 @@ Shoppe shoppe;
 //
 // Robot Part Dialogs
 //
+
+class Model_Dialog {
+public:
+	Model_Dialog() {
+
+		dialog = new Fl_Window(660, 500, "New Model");
+
+		string AllParts = shoppe.all_parts();
+		char *testing = new char[AllParts.length() + 1];
+		strcpy(testing, AllParts.c_str());
+
+		Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+		Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Part Lists");
+		disp->buffer(buff);
+		
+		buff->text(testing);
+
+
+
+		rm_part_number = new Fl_Input(425, 30, 210, 25, "Part #:");
+		rm_part_number->align(FL_ALIGN_LEFT);
+
+		rm_name = new Fl_Input(425, 60, 210, 25, "Model Name:");
+		rm_name->align(FL_ALIGN_LEFT);
+
+		rm_head = new Fl_Input(425, 90, 210, 25, "Head #:");
+		rm_head->align(FL_ALIGN_LEFT);
+
+		rm_arm = new Fl_Input(425, 120, 210, 25, "Arm #:");
+		rm_arm->align(FL_ALIGN_LEFT);
+
+		rm_batt = new Fl_Input(425, 150, 210, 25, "Battery #:");
+		rm_batt->align(FL_ALIGN_LEFT);
+
+		rm_loco = new Fl_Input(425, 180, 210, 25, "Locomotor #:");
+		rm_loco->align(FL_ALIGN_LEFT);
+
+		rm_torso = new Fl_Input(425, 210, 210, 25, "Torso #:");
+		rm_torso->align(FL_ALIGN_LEFT);
+
+		rm_create = new Fl_Return_Button(425, 240, 120, 25, "Create");
+		rm_create->callback((Fl_Callback *)create_modelCB, 0);
+
+		rm_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+		rm_cancel->callback((Fl_Callback *)cancel_modelCB, 0);
+
+		dialog->end();
+		dialog->set_non_modal();
+	}
+
+	void show() { dialog->show(); }
+	void hide() { dialog->hide(); }
+	string part_number() { return rm_part_number->value(); }
+	string name() { return rm_name->value(); }
+	string head() { return rm_head->value(); }
+	string arm() { return rm_arm->value(); }
+	string batt() { return rm_batt->value(); }
+	string loco() { return rm_loco->value(); }
+	string torso() { return rm_torso->value(); }
+
+private:
+	Fl_Window *dialog;
+	Fl_Input *rm_part_number;
+	Fl_Input *rm_name;
+	Fl_Input *rm_head;
+	Fl_Input *rm_arm;
+	Fl_Input *rm_batt;
+	Fl_Input *rm_loco;
+	Fl_Input *rm_torso;
+	Fl_Return_Button *rm_create;
+	Fl_Button *rm_cancel;
+
+};
+
+
 class Head_Dialog {
 public:
 	Head_Dialog() {
@@ -518,6 +598,9 @@ void CloseCB(Fl_Widget* w, void* p) {
 }
 
 // menu create callback functions
+void menu_create_modelCB(Fl_Widget* w, void* p) {
+	model_dlg->show();
+}
 void menu_create_headCB(Fl_Widget* w, void* p) {
 	head_dlg->show();
 }
@@ -557,6 +640,10 @@ void cancel_torsoCB(Fl_Widget* w, void* p) {
 	torso_dlg->hide();
 }
 
+void cancel_modelCB(Fl_Widget* w, void* p) {
+	model_dlg->hide();
+}
+
 void cancel_custCB(Fl_Widget* w, void* p) {
 	cust_dlg->hide();
 }
@@ -566,74 +653,79 @@ void cancel_saCB(Fl_Widget* w, void* p) {
 // create callback functions
 void create_headCB(Fl_Widget* w, void* p) {
 
-	
-	int part_num = stoi(head_dlg->part_number());
 	int weight = stoi(head_dlg->weight());
 	int cost = stoi(head_dlg->cost());
 	int quantity = stoi(head_dlg->quantity());
 
-	shoppe.create_newpart(new Head(part_num, weight, cost, head_dlg->description(), quantity), 1);
+	shoppe.create_newpart(new Head(head_dlg->part_number(), weight, cost, head_dlg->description(), quantity), 1);
 
 	head_dlg->hide();
 }
+
+
+void create_modelCB(Fl_Widget* w, void* p) {
+
+	int head = stoi(model_dlg->head());
+	int arm = stoi(model_dlg->arm());
+	int batt = stoi(model_dlg->batt());
+	int loco = stoi(model_dlg->loco());
+	int torso = stoi(model_dlg->torso());
+
+	shoppe.make_model(head, arm, batt, loco, torso, model_dlg->part_number(), model_dlg->name());
+
+	model_dlg->hide();
+}
+
 void create_armCB(Fl_Widget* w, void* p) {
 
 	
-	int part_num = stoi(arm_dlg->part_number());
+	
 	int weight = stoi(arm_dlg->weight());
 	int cost = stoi(arm_dlg->cost());
 	int quantity = stoi(arm_dlg->quantity());
 	int power = stoi(arm_dlg->power());
 
-	shoppe.create_newpart(new Arm(part_num, weight, cost, arm_dlg->description(), power, quantity), 2);
+	shoppe.create_newpart(new Arm(arm_dlg->part_number(), weight, cost, arm_dlg->description(), power, quantity), 2);
 
 	arm_dlg->hide();
 }
 void create_battCB(Fl_Widget* w, void* p) {
 
-	
-	int part_num = stoi(batt_dlg->part_number());
 	int weight = stoi(batt_dlg->weight());
 	int cost = stoi(batt_dlg->cost());
 	int quantity = stoi(batt_dlg->quantity());
 	int energy = stoi(batt_dlg->energy());
 
-	shoppe.create_newpart(new Battery(part_num, weight, cost, batt_dlg->description(), energy, quantity), 3);
+	shoppe.create_newpart(new Battery(batt_dlg->part_number(), weight, cost, batt_dlg->description(), energy, quantity), 3);
 
 	batt_dlg->hide();
 }
 void create_locoCB(Fl_Widget* w, void* p) {
 
-	
-	int part_num = stoi(loco_dlg->part_number());
 	int weight = stoi(loco_dlg->weight());
 	int cost = stoi(loco_dlg->cost());
 	int quantity = stoi(loco_dlg->quantity());
 	int power = stoi(loco_dlg->power());
 	int speed = stoi(loco_dlg->speed());
 
-	shoppe.create_newpart(new Locomotor(part_num, weight, cost, loco_dlg->description(), power, speed, quantity), 4);
+	shoppe.create_newpart(new Locomotor(loco_dlg->part_number(), weight, cost, loco_dlg->description(), power, speed, quantity), 4);
 
 	loco_dlg->hide();
 }
 void create_torsoCB(Fl_Widget* w, void* p) {
 
-	
-	int part_num = stoi(torso_dlg->part_number());
 	int weight = stoi(torso_dlg->weight());
 	int cost = stoi(torso_dlg->cost());
 	int quantity = stoi(torso_dlg->quantity());
 	int batt_count = stoi(torso_dlg->batt_count());
 
-	shoppe.create_newpart(new Torso(part_num, weight, cost, torso_dlg->description(), batt_count, quantity), 5);
+	shoppe.create_newpart(new Torso(torso_dlg->part_number(), weight, cost, torso_dlg->description(), batt_count, quantity), 5);
 
 	torso_dlg->hide();
 }
 
 
 void create_custCB(Fl_Widget* w, void* p) {
-
-	
 
 	shoppe.add_customer(new Customer(cust_dlg->cust_name(), cust_dlg->cust_number(), cust_dlg->sa_number()));
 
@@ -701,7 +793,7 @@ Fl_Menu_Item menuitems[] = {
 		{ "Robot Locomotor", 0, (Fl_Callback *)menu_create_locoCB },
 		{ "Robot Torso", 0, (Fl_Callback *)menu_create_torsoCB },
 		{ 0 },
-	{ "Robot Model" },
+	{ "Robot Model", 0, (Fl_Callback *)menu_create_modelCB },
 	{ 0 },
 
 { "&Report", 0, 0, 0, FL_SUBMENU },
@@ -745,23 +837,11 @@ int main() {
 	torso_dlg = new Torso_Dialog{};
 	cust_dlg = new Customer_Dialog{};
 	sa_dlg = new SalesAssociate_Dialog{};
+	model_dlg = new Model_Dialog{};
 
 	// Create a window and box
 	win = new Fl_Window{ X, Y, "Robot Shoppe" };
-	/*box = new Fl_Box(100, 150, 300, 100, "Welcome to the\nRobot Shoppe!");
-	box->box(FL_UP_BOX);
-	box->labelfont(FL_BOLD + FL_ITALIC);
-	box->labelsize(36);
-	box->labeltype(FL_SHADOW_LABEL);
-	*/
-
-
-	//upload welcome_screen image
-
-	/*pngbox = new Fl_Box(100, 150, 600, 500);
-	welpng = new Fl_PNG_Image("welcome_screen.png");
-	pngbox->image(welpng);
-	*/
+	
 
 	jpgbox = new Fl_Box(250, 250, 300, 100);
 	weljpg = new Fl_JPEG_Image("welcome_screen.jpg");

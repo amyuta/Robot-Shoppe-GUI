@@ -27,6 +27,55 @@ void Shoppe::create_newpart(RobotPart* part, int type){
     }
 }
 
+string Shoppe::all_parts() {
+	int i = 0;
+	string allParts = "";
+
+	allParts = "Heads:\n";
+	while (i < head.size()) {
+
+		allParts = allParts + head[i]->get_info(allParts) + "\n";
+		i++;
+	}
+	//cout << i << endl;
+
+	i = 0;
+	allParts = allParts + "\nArms:\n";
+	while (i < arm.size()) {
+
+		allParts = allParts + arm[i]->get_info(allParts) + "\n";
+		i++;
+	}
+	cout << i << endl;
+	i = 0;
+	allParts = allParts + "\nBatteries:\n";
+	while (i < battery.size()) {
+
+		allParts = allParts + battery[i]->get_info(allParts) + "\n";
+		i++;
+	}
+	cout << i << endl;
+	i = 0;
+	allParts = allParts + "\nLocomotors:\n";
+	while (i < loco.size()) {
+
+		allParts = allParts + loco[i]->get_info(allParts) + "\n";
+		i++;
+	}
+	cout << i << endl;
+	i = 0;
+	allParts = allParts + "\nTorsos:\n";
+	while (i < torso.size()) {
+
+		allParts = allParts + torso[i]->get_info(allParts) + "\n";
+		i++;
+	}
+	cout << i << endl;
+	return allParts;
+
+
+}
+
 void Shoppe::list_parts(int type){
     int i = 0;
 
@@ -72,7 +121,7 @@ void Shoppe::list_parts(int type){
     }
 }
 
-void Shoppe::add_to_parts(int type, int quantity, int part_num){
+/*void Shoppe::add_to_parts(int type, int quantity, int part_num){
 
     int i = 0;
 
@@ -109,7 +158,7 @@ void Shoppe::add_to_parts(int type, int quantity, int part_num){
     }
 
 
-}
+}*/
 
 
 void Shoppe::list_part_details(int type) {
@@ -143,7 +192,7 @@ bool Shoppe:: check_parts(int c_bat, int c_torso, int c_arm){
 
 }
 
-void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, int mod_num, string mod_name){
+void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name){
 
     int cost = 0;
 
@@ -279,7 +328,7 @@ string Shoppe::list_cust(){
 	return allCust;
 }
 
-int Shoppe::searchfor_part(int type, int num){
+/*int Shoppe::searchfor_part(int type, int num){
 
     int i = 0, pnum;
 
@@ -347,7 +396,7 @@ int Shoppe::searchfor_part(int type, int num){
     }
 
     return 0;
-}
+}*/
 
 void Shoppe::save_info(){
     

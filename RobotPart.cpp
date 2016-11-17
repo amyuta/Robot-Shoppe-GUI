@@ -8,18 +8,20 @@
 
 using namespace std;
 
+string RobotPart::get_info(string allDetails) {
+
+
+
+	allDetails ="Part #: "+ p_num + "Description: " + p_description;
+	return allDetails;
+
+	
+}
 
 void RobotPart:: list_all(){
 
     cout << p_num << endl;
     
-}
-
-void RobotPart:: add_quan(int part_num, int quantity){
-    
-    if(p_num == part_num){
-        p_quantity = p_quantity + quantity;
-    }
 }
 
 void RobotPart:: list_all_detail() {
@@ -30,10 +32,6 @@ double RobotPart::get_cost() {
     
     return p_cost;
     
-}
-
-int RobotPart::get_pnum() {
-    return p_num;
 }
 
 void RobotPart::save_all() {

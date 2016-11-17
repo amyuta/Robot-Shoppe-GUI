@@ -14,11 +14,12 @@ class Torso:public RobotPart {
     
 
     public:
-     Torso(int part_num, double weight, double cost, string description, int batt_count, int quantity) : p_battcount(batt_count), RobotPart(part_num, weight, cost, description, quantity){}
+     Torso(string part_num, double weight, double cost, string description, int batt_count, int quantity) : p_battcount(batt_count), RobotPart(part_num, weight, cost, description, quantity){}
 
     virtual int quan_count();
     
     virtual void save_all();
+	virtual void save_as_all(string filename);
     
     
 
