@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include "robot_model.h"
@@ -17,6 +18,15 @@ void Robot_Model:: make_robotmodel(RobotPart head, RobotPart arm, RobotPart batt
     parts.push_back(loco);
     parts.push_back(torso);
 
+}
+
+string Robot_Model::list_model() {
+	string info;
+	stringstream s;
+	s << setprecision(3) << price;
+
+	info = name + "\n\tModel Number: " + model_num + "\n\tCost: $" + s.str() + "\n\n";
+	return info;
 }
 
 void Robot_Model::show_model(){

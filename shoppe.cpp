@@ -34,7 +34,7 @@ string Shoppe::all_parts() {
 	allParts = "Heads:\n";
 	while (i < head.size()) {
 
-		allParts = allParts + head[i]->get_info(allParts) + "\n";
+		allParts = allParts + to_string(i+1)+ ") " + head[i]->get_info(allParts) + "\n";
 		i++;
 	}
 	//cout << i << endl;
@@ -43,34 +43,34 @@ string Shoppe::all_parts() {
 	allParts = allParts + "\nArms:\n";
 	while (i < arm.size()) {
 
-		allParts = allParts + arm[i]->get_info(allParts) + "\n";
+		allParts = allParts + to_string(i + 1) + ") " + arm[i]->get_info(allParts) + "\n";
 		i++;
 	}
-	cout << i << endl;
+	//cout << i << endl;
 	i = 0;
 	allParts = allParts + "\nBatteries:\n";
 	while (i < battery.size()) {
 
-		allParts = allParts + battery[i]->get_info(allParts) + "\n";
+		allParts = allParts + to_string(i + 1) + ") " + battery[i]->get_info(allParts) + "\n";
 		i++;
 	}
-	cout << i << endl;
+	//cout << i << endl;
 	i = 0;
 	allParts = allParts + "\nLocomotors:\n";
 	while (i < loco.size()) {
 
-		allParts = allParts + loco[i]->get_info(allParts) + "\n";
+		allParts = allParts + to_string(i + 1) + ") " + loco[i]->get_info(allParts) + "\n";
 		i++;
 	}
-	cout << i << endl;
+	//cout << i << endl;
 	i = 0;
 	allParts = allParts + "\nTorsos:\n";
 	while (i < torso.size()) {
 
-		allParts = allParts + torso[i]->get_info(allParts) + "\n";
+		allParts = allParts + to_string(i + 1) + ") " + torso[i]->get_info(allParts) + "\n";
 		i++;
 	}
-	cout << i << endl;
+	//cout << i << endl;
 	return allParts;
 
 
@@ -192,6 +192,10 @@ bool Shoppe:: check_parts(int c_bat, int c_torso, int c_arm){
 
 }
 
+int Shoppe::model_count() {
+	return robot_models.size();
+}
+
 void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name){
 
     int cost = 0;
@@ -210,6 +214,13 @@ void Shoppe::add_new_model(Robot_Model model, RobotPart head, RobotPart arm, Rob
     robot_models.push_back(model);
     robot_models[robot_models.size()-1].make_robotmodel(head, arm, battery, loco, torso);
 
+}
+
+string Shoppe::getModelString(int count) {
+	string curr;
+
+	curr = robot_models[count].list_model();
+	return curr;
 }
 
 void Shoppe:: show_models(){

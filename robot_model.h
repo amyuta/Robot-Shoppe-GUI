@@ -13,6 +13,7 @@ public:
     
     void make_robotmodel(RobotPart head, RobotPart arm, RobotPart battery, RobotPart loco, RobotPart torso);
     void show_model();
+	string list_model();
     double get_price();
     virtual void save_alls();
 	virtual void save_as_alls(string filename);

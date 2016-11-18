@@ -38,6 +38,7 @@ public:
     void make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name);
     void show_models();
     int searchfor_part(int type, int num);
+	string getModelString(int count);
     
     
     //method for orders
@@ -45,6 +46,7 @@ public:
     void pay_order(int ord_num);
     void list_order(int sales_a);
     void paid_orders(int sa);
+	int model_count();
     
     //save
     void save_info();

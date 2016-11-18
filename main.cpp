@@ -11,6 +11,10 @@
 #include <Fl/Fl_JPEG_Image.H>
 #include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Return_Button.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Tabs.H>
+#include <FL/Fl_Group.H>
 
 #include <iostream>
 #include <string>
@@ -40,14 +44,15 @@ void create_locoCB(Fl_Widget* w, void* p);
 void cancel_locoCB(Fl_Widget* w, void* p);
 void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
-
+int showCatalog(Fl_Widget* w, void* p);
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
-
+int createOrder(Fl_Widget* w, void* p);
 void create_custCB(Fl_Widget* w, void* p);
 void cancel_custCB(Fl_Widget* w, void* p);
 void create_saCB(Fl_Widget* w, void* p);
 void cancel_saCB(Fl_Widget* w, void* p);
+int createModel(Fl_Widget* w, void* p);
 
 class Robot_Part_Dialog;
 class Head_Dialog;
@@ -63,10 +68,10 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
-Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7;
+Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso;;
 View *view;
 Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
@@ -78,9 +83,167 @@ Locomotor_Dialog *loco_dlg;
 Torso_Dialog *torso_dlg;
 Model_Dialog *model_dlg;
 
+
 Customer_Dialog *cust_dlg;
 SalesAssociate_Dialog *sa_dlg;
 Shoppe shoppe;
+
+
+
+int createOrder(Fl_Widget* w, void* p) {
+	order = new Fl_Window(660, 500, "Create Robot Model Order");
+
+	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 300, 200); 
+	{
+		Fl_Group* grup = new Fl_Group(20, 30, 280, 170, "Customers");
+		{
+			string AllCusts = shoppe.list_cust();
+			char *testing = new char[AllCusts.length() + 1];
+			strcpy(testing, AllCusts.c_str());
+
+			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40);
+			disp->buffer(buff);
+			win->resizable(*disp);
+			win->show();
+			buff->text(testing);
+		}
+		grup->end();
+		Fl_Group* grup2 = new Fl_Group(20, 30, 280, 170, "Sales Associates");
+		{
+			//Turn string into Char array
+			string AllSa = shoppe.list_sa();
+			char *testing = new char[AllSa.length() + 1];
+			strcpy(testing, AllSa.c_str());
+
+			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40);
+			disp->buffer(buff);
+			win->resizable(*disp);
+			win->show();
+			buff->text(testing);
+
+		}
+		grup2->end();
+		Fl_Group* grup3 = new Fl_Group(20, 30, 280, 170, "Models");
+		{
+			int counter = shoppe.model_count();
+			int y = 30;
+
+			if (counter == 0) {
+				Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 60, "Models");
+				disp->buffer(buff);
+
+				buff->text("No Created Models");
+			}
+			for (int i = 0; i < counter; i++) {
+				string modelInfo = shoppe.getModelString(i);
+				char *testing = new char[modelInfo.length() + 1];
+				strcpy(testing, modelInfo.c_str());
+
+				Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 80, "");
+				disp->buffer(buff);
+
+				buff->text(testing);
+
+				y = y + 100;
+			}
+
+		}
+		grup3->end();
+	}
+	ordertabs->end();
+	order->end();
+	order->show();
+	order->set_non_modal();
+	return(Fl::run());
+
+}
+
+int showCatalog(Fl_Widget* w, void* p) {
+	catalog = new Fl_Window(660, 500, "Robot Model Catalog");
+
+	int counter = shoppe.model_count();
+	int y = 30;
+
+	if (counter == 0) {
+		Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+		Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 60, "Models");
+		disp->buffer(buff);
+
+		buff->text("No Created Models");
+	}
+	for (int i = 0; i < counter; i++) {
+		string modelInfo = shoppe.getModelString(i);
+		char *testing = new char[modelInfo.length() + 1];
+		strcpy(testing, modelInfo.c_str());
+
+		Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+		Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 80, "");
+		disp->buffer(buff);
+
+		buff->text(testing);
+
+		y = y + 100;
+	}
+	catalog->end();
+	catalog->show();
+	catalog->set_non_modal();
+
+	return(Fl::run());
+}
+
+int createModel(Fl_Widget* w, void* p) {
+	models = new Fl_Window(660, 500, "New Model");
+
+	string AllParts = shoppe.all_parts();
+	char *testing = new char[AllParts.length() + 1];
+	strcpy(testing, AllParts.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Part Lists");
+	disp->buffer(buff);
+
+	buff->text(testing);
+
+
+
+	rm_part_number = new Fl_Input(425, 30, 210, 25, "Part #:");
+	rm_part_number->align(FL_ALIGN_LEFT);
+
+	rm_name = new Fl_Input(425, 60, 210, 25, "Model Name:");
+	rm_name->align(FL_ALIGN_LEFT);
+
+	rm_head = new Fl_Input(425, 90, 210, 25, "Head #:");
+	rm_head->align(FL_ALIGN_LEFT);
+
+	rm_arm = new Fl_Input(425, 120, 210, 25, "Arm #:");
+	rm_arm->align(FL_ALIGN_LEFT);
+
+	rm_batt = new Fl_Input(425, 150, 210, 25, "Battery #:");
+	rm_batt->align(FL_ALIGN_LEFT);
+
+	rm_loco = new Fl_Input(425, 180, 210, 25, "Locomotor #:");
+	rm_loco->align(FL_ALIGN_LEFT);
+
+	rm_torso = new Fl_Input(425, 210, 210, 25, "Torso #:");
+	rm_torso->align(FL_ALIGN_LEFT);
+
+	Fl_Return_Button *rm_create = new Fl_Return_Button(425, 240, 120, 25, "Create");
+	rm_create->callback((Fl_Callback *)create_modelCB, 0);
+
+	Fl_Button *rm_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	rm_cancel->callback((Fl_Callback *)cancel_modelCB, 0);
+
+	models->end();
+	models->show();
+	models->set_non_modal();
+
+	return(Fl::run());
+}
+
 
 //
 // Robot Part Dialogs
@@ -247,6 +410,7 @@ public:
 
 		void show() { dialog->show(); }
 		void hide() { dialog->hide(); }
+		void redraw() { dialog->redraw(); }
 		string part_number() { return rp_part_number->value(); }
 		string weight() { return rp_weight->value(); }
 		string cost() { return rp_cost->value(); }
@@ -599,7 +763,9 @@ void CloseCB(Fl_Widget* w, void* p) {
 
 // menu create callback functions
 void menu_create_modelCB(Fl_Widget* w, void* p) {
-	model_dlg->show();
+	createModel(w, p);
+	
+	//model_dlg->show();
 }
 void menu_create_headCB(Fl_Widget* w, void* p) {
 	head_dlg->show();
@@ -641,7 +807,7 @@ void cancel_torsoCB(Fl_Widget* w, void* p) {
 }
 
 void cancel_modelCB(Fl_Widget* w, void* p) {
-	model_dlg->hide();
+	models->hide();
 }
 
 void cancel_custCB(Fl_Widget* w, void* p) {
@@ -665,15 +831,15 @@ void create_headCB(Fl_Widget* w, void* p) {
 
 void create_modelCB(Fl_Widget* w, void* p) {
 
-	int head = stoi(model_dlg->head());
-	int arm = stoi(model_dlg->arm());
-	int batt = stoi(model_dlg->batt());
-	int loco = stoi(model_dlg->loco());
-	int torso = stoi(model_dlg->torso());
+	int head = stoi(rm_head->value());
+	int arm = stoi(rm_arm->value());
+	int batt = stoi(rm_batt->value());
+	int loco = stoi(rm_loco->value());
+	int torso = stoi(rm_torso->value());
 
-	shoppe.make_model(head, arm, batt, loco, torso, model_dlg->part_number(), model_dlg->name());
+	shoppe.make_model(head-1, arm-1, batt-1, loco-1, torso-1, rm_part_number->value(), rm_name->value());
 
-	model_dlg->hide();
+	models->hide();
 }
 
 void create_armCB(Fl_Widget* w, void* p) {
@@ -686,7 +852,6 @@ void create_armCB(Fl_Widget* w, void* p) {
 	int power = stoi(arm_dlg->power());
 
 	shoppe.create_newpart(new Arm(arm_dlg->part_number(), weight, cost, arm_dlg->description(), power, quantity), 2);
-
 	arm_dlg->hide();
 }
 void create_battCB(Fl_Widget* w, void* p) {
@@ -766,6 +931,7 @@ void SaveAsCB(Fl_Widget* w, void* p) {
 //
 // Menu
 //
+
 Fl_Menu_Item menuitems[] = {
 { "&File", 0, 0, 0, FL_SUBMENU },
 	{"&New", FL_ALT + 'n'},
@@ -783,7 +949,7 @@ Fl_Menu_Item menuitems[] = {
 	{ 0 },
 
 { "&Create", 0, 0, 0, FL_SUBMENU },
-	{ "Order", 0,0,0,FL_MENU_DIVIDER },
+	{ "Order", 0,(Fl_Callback *)createOrder,0,FL_MENU_DIVIDER },
 	{ "Customer", 0, (Fl_Callback *)menu_create_custCB },
 	{ "Sales Associate", 0,(Fl_Callback *)menu_create_saCB,0,FL_MENU_DIVIDER },
 	{ "&Robot Part", 0, 0, 0, FL_SUBMENU},
@@ -803,7 +969,7 @@ Fl_Menu_Item menuitems[] = {
 	{ "Orders by Sales Associate", 0,0,0,FL_MENU_DIVIDER },
 	{ "All Customers", 0, (Fl_Callback *)customer_View},
 	{ "All Sales Associates" , 0,(Fl_Callback *)sa_View,0,FL_MENU_DIVIDER },
-	{ "All Robot Models" },
+	{ "All Robot Models", 0, (Fl_Callback *)showCatalog },
 	{ "All Robot Parts" },
 	{ 0 },
 
@@ -863,3 +1029,4 @@ int main() {
 	win->show();
 	return(Fl::run());
 }
+

@@ -12,7 +12,7 @@ string RobotPart::get_info(string allDetails) {
 
 
 
-	allDetails ="Part #: "+ p_num + "Description: " + p_description;
+	allDetails ="Part #: "+ p_num + " Description: " + p_description;
 	return allDetails;
 
 	
