@@ -15,7 +15,7 @@
 #include<string>
 using namespace std;
 
-void Controller::cli() {
+/*void Controller::cli() {
 	int cmd = -1;
 	while (cmd != 0) {
 		view.show_mainmenu();
@@ -24,8 +24,8 @@ void Controller::cli() {
 		cin.ignore(); // consume \n
 		execute_cmd(cmd);
 	}
-}
-
+}*/
+/*
 void Controller:: execute_cmd(int cmd) {
 
     if (cmd == 1) {
@@ -133,8 +133,8 @@ void Controller:: execute_cmd(int cmd) {
         view.show_mainmenu();
     }
 
-}
-
+}*/
+/*
 void Controller::execute_createnewpart(int cmd) {
     int type, option, part_num, power, batt_count, max_speed, energy, quantity, add_part;
     double weight, cost;
@@ -304,7 +304,8 @@ void Controller::execute_createnewpart(int cmd) {
 
     execute_cmd(1);
 }
-
+*/
+/*
 
 void Controller::execute_createrobotmodel(){
 
@@ -373,7 +374,9 @@ void Controller::execute_createrobotmodel(){
         }
 
     }
-}
+}*/
+
+/*
 
 void Controller::new_customer(){
 
@@ -607,10 +610,10 @@ void Controller::sales_report(){
     shoppe.paid_orders(sales_a-1);
     
     
-}
+}*/
 
 void Controller::load_data() { //load saved data
-    int part_num;
+    string part_num;
     int weight;
     int cost;
     int quantity;
@@ -627,8 +630,7 @@ void Controller::load_data() { //load saved data
     numcount = stoi(temp);
 
     while(i < numcount) {
-        getline(ifs, temp);
-        part_num = stoi(temp);
+        getline(ifs, part_num);
         getline(ifs, temp);
         weight = stoi(temp);
         getline(ifs, temp);
@@ -646,8 +648,7 @@ void Controller::load_data() { //load saved data
     numcount = stoi(temp);
 
 	while (i < numcount) {
-        getline(ifs, temp);
-		part_num = stoi(temp);
+        getline(ifs, part_num);
 		getline(ifs, temp);
 		weight = stoi(temp);
 		getline(ifs, temp);
@@ -668,8 +669,7 @@ void Controller::load_data() { //load saved data
     numcount = stoi(temp);
     
     while (i < numcount) {
-        getline(ifs, temp);
-        part_num = stoi(temp);
+        getline(ifs, part_num);
         getline(ifs, temp);
         weight = stoi(temp);
         getline(ifs, temp);
@@ -690,8 +690,7 @@ void Controller::load_data() { //load saved data
     numcount = stoi(temp);
 
 	while (i < numcount) {
-        getline(ifs, temp);
-		part_num = stoi(temp);
+        getline(ifs, part_num);
 		getline(ifs, temp);
 		weight = stoi(temp);
 		getline(ifs, temp);
@@ -714,8 +713,7 @@ void Controller::load_data() { //load saved data
     numcount = stoi(temp);
 
 	while (i < numcount) {
-        getline(ifs, temp);
-		part_num = stoi(temp);
+        getline(ifs, part_num);
 		getline(ifs, temp);
 		weight = stoi(temp);
 		getline(ifs, temp);
@@ -732,30 +730,25 @@ void Controller::load_data() { //load saved data
 
 
 	i = 0;
-	string c_name;
-	int c_num, sales_a;
+	string c_name, c_num, sales_a;
 	getline(ifs, temp);
     numcount = stoi(temp);
 
     while (i < numcount) {
-        getline(ifs, temp);
-        c_num = stoi(temp);
+        getline(ifs, c_num);
         getline(ifs, c_name);
-        getline(ifs, temp);
-        sales_a = stoi(temp);
+        getline(ifs, sales_a);
         shoppe.add_customer( new Customer(c_name, c_num, sales_a));
         i++;
     }
     
     i = 0;
-    int sa_num;
-    string sa_name;
+    string sa_name, sa_num;
     getline(ifs, temp);
     numcount = stoi(temp);
     
     while (i < numcount) {
-        getline(ifs, temp);
-        sa_num = stoi(temp);
+        getline(ifs, sa_num);
         getline(ifs, sa_name);
         shoppe.add_sa(new SalesAssociate(sa_name, sa_num));
         i++;
@@ -764,18 +757,16 @@ void Controller::load_data() { //load saved data
 
     
     i = 0;
-    int model_num;
     int price;
     int check;
     int headm, armm, torsom, battm, locom;
-    string name;
+    string name, model_num;
     getline(ifs, temp);
     numcount = stoi(temp);
 
     while (i < numcount) {
         getline(ifs, name);
-        getline(ifs, temp);
-        model_num = stoi(temp);
+        getline(ifs, model_num);
         
         getline(ifs, temp);
         price = stoi(temp);

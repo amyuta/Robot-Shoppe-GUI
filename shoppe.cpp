@@ -339,9 +339,10 @@ string Shoppe::list_cust(){
 	return allCust;
 }
 
-/*int Shoppe::searchfor_part(int type, int num){
+int Shoppe::searchfor_part(int type, string num){
 
-    int i = 0, pnum;
+	int i = 0;
+	string pnum;
 
     if (type == 1) {
 
@@ -407,7 +408,7 @@ string Shoppe::list_cust(){
     }
 
     return 0;
-}*/
+}
 
 void Shoppe::save_info(){
     
@@ -614,3 +615,5 @@ void Shoppe::save_as_info(string filename) {
 
 
 }
+
+

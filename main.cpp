@@ -15,8 +15,10 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Tabs.H>
 #include <FL/Fl_Group.H>
+#include <FL/Fl_File_Browser.H>
 
 #include <iostream>
+#include<fstream>
 #include <string>
 #include "shoppe.h"
 #include "view.h"
@@ -29,6 +31,7 @@
 #include "RobotPart.h"
 #include "customer.h"
 #include "sales_associate.h"
+#include "controller.h"
 
 
 //
@@ -44,6 +47,10 @@ void create_locoCB(Fl_Widget* w, void* p);
 void cancel_locoCB(Fl_Widget* w, void* p);
 void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
+void loadchooseCB(Fl_Widget* w, void* p);
+void loadCB(Fl_Widget* w, void* p);
+void load_data();
+void load_choice_data(string filename);
 int showCatalog(Fl_Widget* w, void* p);
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
@@ -68,7 +75,7 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports, *models, *catalog, *order;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
 Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso;;
@@ -89,11 +96,239 @@ SalesAssociate_Dialog *sa_dlg;
 Shoppe shoppe;
 
 
+void load_choice_data(string filename) { //load saved data
+	string part_num;
+	int weight;
+	int cost;
+	int quantity;
+	int energy;
+	int batt_count;
+	string descrip;
+	string temp;
+	int i = 0;
+	int numcount;
+	int power;
+	ifstream ifs(filename); //load from file
+
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, part_num);
+		getline(ifs, temp);
+		weight = stoi(temp);
+		getline(ifs, temp);
+		cost = stoi(temp);
+		getline(ifs, temp);
+		quantity = stoi(temp);
+		getline(ifs, descrip);
+
+		shoppe.create_newpart(new Head(part_num, weight, cost, descrip, quantity), 1);
+		i++;
+	}
+	i = 0;
+
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, part_num);
+		getline(ifs, temp);
+		weight = stoi(temp);
+		getline(ifs, temp);
+		cost = stoi(temp);
+		getline(ifs, temp);
+		quantity = stoi(temp);
+		getline(ifs, temp);
+		power = stoi(temp);
+		getline(ifs, descrip);
+
+
+		shoppe.create_newpart(new Arm(part_num, weight, cost, descrip, power, quantity), 2);
+		i++;
+	}
+
+	i = 0;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, part_num);
+		getline(ifs, temp);
+		weight = stoi(temp);
+		getline(ifs, temp);
+		cost = stoi(temp);
+		getline(ifs, temp);
+		quantity = stoi(temp);
+		getline(ifs, temp);
+		energy = stoi(temp);
+		getline(ifs, descrip);
+
+		shoppe.create_newpart(new Battery(part_num, weight, cost, descrip, energy, quantity), 3);
+		i++;
+	}
+
+	i = 0;
+	int max_speed;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, part_num);
+		getline(ifs, temp);
+		weight = stoi(temp);
+		getline(ifs, temp);
+		cost = stoi(temp);
+		getline(ifs, temp);
+		quantity = stoi(temp);
+		getline(ifs, temp);
+		power = stoi(temp);
+		getline(ifs, temp);
+		max_speed = stoi(temp);
+		getline(ifs, descrip);
+
+		shoppe.create_newpart(new Locomotor(part_num, weight, cost, descrip, power, max_speed, quantity), 4);
+		i++;
+	}
+
+
+	i = 0;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, part_num);
+		getline(ifs, temp);
+		weight = stoi(temp);
+		getline(ifs, temp);
+		cost = stoi(temp);
+		getline(ifs, temp);
+		quantity = stoi(temp);
+		getline(ifs, temp);
+		batt_count = stoi(temp);
+		getline(ifs, descrip);
+
+		shoppe.create_newpart(new Torso(part_num, weight, cost, descrip, batt_count, quantity), 5);
+		i++;
+	}
+
+
+	i = 0;
+	string c_name, c_num, sales_a;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, c_num);
+		getline(ifs, c_name);
+		getline(ifs, sales_a);
+		shoppe.add_customer(new Customer(c_name, c_num, sales_a));
+		i++;
+	}
+
+	i = 0;
+	string sa_name, sa_num;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, sa_num);
+		getline(ifs, sa_name);
+		shoppe.add_sa(new SalesAssociate(sa_name, sa_num));
+		i++;
+
+	}
+
+
+	i = 0;
+	int price;
+	string check;
+	int headm, armm, torsom, battm, locom;
+	string name, model_num;
+	getline(ifs, temp);
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+		getline(ifs, name);
+		getline(ifs, model_num);
+
+		getline(ifs, temp);
+		price = stoi(temp);
+
+		getline(ifs, check);
+		headm = shoppe.searchfor_part(1, check);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+
+		getline(ifs, check);
+		//check = stoi(temp);
+		armm = shoppe.searchfor_part(2, check);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, check);
+
+		//check = stoi(temp);
+		battm = shoppe.searchfor_part(3, check);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, check);
+
+		//check = stoi(temp);
+		locom = shoppe.searchfor_part(4, check);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, check);
+		//getline(ifs, temp);
+
+		//check = stoi(temp);
+		torsom = shoppe.searchfor_part(5, check);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+		getline(ifs, temp);
+
+		shoppe.make_model(headm, armm, battm, locom, torsom, model_num, name);
+		i++;
+	}
+
+	/*
+	i = 0;
+	int o_num, o_model, oc_num, o_sales;
+	string o_name;
+	numcount = stoi(temp);
+
+	while (i < numcount) {
+	getline(ifs, temp);
+	o_num = stoi(temp);
+	getline(ifs, temp);
+	o_model = stoi(temp);
+	getline(ifs, o_name);
+	getline(ifs, temp);
+	oc_num = stoi(temp);
+	getline(ifs, temp);
+	o_sales = stoi(temp);
+	shoppe.add_order(new Order(o_num, o_model, o_name, oc_num, o_sales), o_model-1);
+	i++;
+
+	}
+	*/
+
+
+}
 
 int createOrder(Fl_Widget* w, void* p) {
 	order = new Fl_Window(660, 500, "Create Robot Model Order");
 
-	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 300, 200); 
+	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 400, 200); 
 	{
 		Fl_Group* grup = new Fl_Group(20, 30, 280, 170, "Customers");
 		{
@@ -102,7 +337,7 @@ int createOrder(Fl_Widget* w, void* p) {
 			strcpy(testing, AllCusts.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 380 - 40, 180 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
@@ -117,7 +352,7 @@ int createOrder(Fl_Widget* w, void* p) {
 			strcpy(testing, AllSa.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 380 - 40, 180 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
@@ -128,11 +363,11 @@ int createOrder(Fl_Widget* w, void* p) {
 		Fl_Group* grup3 = new Fl_Group(20, 30, 280, 170, "Models");
 		{
 			int counter = shoppe.model_count();
-			int y = 30;
+			int y = 40;
 
 			if (counter == 0) {
 				Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 60, "Models");
+				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 380, 60);
 				disp->buffer(buff);
 
 				buff->text("No Created Models");
@@ -926,6 +1161,25 @@ void SaveAsCB(Fl_Widget* w, void* p) {
 	}
 }
 
+void loadCB(Fl_Widget* w, void* p) {
+	int selection = 1;
+	if (!view->dataDownload()) {
+		selection = fl_choice("Are you sure you want to load the shoppe data?", fl_no, fl_yes, 0);
+	}
+	if (selection == 1) {
+		load_choice_data("data.txt");
+	}
+}
+
+void loadchooseCB(Fl_Widget* w, void* p) {
+	int selection = 1;
+	string t1 = string{ fl_input("Enter the filename with extension to load.", 0) };
+
+	if (selection == 1) {
+		load_choice_data(t1);
+	}
+}
+
 
 
 //
@@ -934,8 +1188,8 @@ void SaveAsCB(Fl_Widget* w, void* p) {
 
 Fl_Menu_Item menuitems[] = {
 { "&File", 0, 0, 0, FL_SUBMENU },
-	{"&New", FL_ALT + 'n'},
-	{"&Open", FL_ALT + 'o'},
+	{"&Open Default", FL_ALT + 'o', (Fl_Callback *)loadCB},
+	{ "&Open Other", 0, (Fl_Callback *)loadchooseCB },
 	{"&Save to Default", FL_ALT + 's', (Fl_Callback *)SaveCB },
 	{ "&Save to New", 0, (Fl_Callback *)SaveAsCB },
 	{ "&Quit", FL_ALT + 'q', (Fl_Callback *)CloseCB },

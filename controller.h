@@ -6,7 +6,7 @@
 
 class Controller {
 public:
-	Controller(Shoppe& shop) : shoppe(shop) { }
+	//Controller(Shoppe& shop) : shoppe(shop) { }
 	void cli();
 	void execute_cmd(int cmd);
 	void create_model();

@@ -37,7 +37,7 @@ public:
     //methods to make/show models
     void make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name);
     void show_models();
-    int searchfor_part(int type, int num);
+    int searchfor_part(int type, string num);
 	string getModelString(int count);
     
     
@@ -51,6 +51,7 @@ public:
     //save
     void save_info();
 	void save_as_info(string filename);
+	void load_data();
 
     int type;
 

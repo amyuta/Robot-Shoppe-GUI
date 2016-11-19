@@ -8,6 +8,11 @@
 
 using namespace std;
 
+string RobotPart::get_pnum() {
+	return p_num;
+}
+
+
 string RobotPart::get_info(string allDetails) {
 
 

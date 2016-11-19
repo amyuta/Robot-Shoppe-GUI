@@ -23,7 +23,7 @@ public:
     void list_all();
    // void add_quan(int part_num, int quantity);
     void list_all_detail();
-  //  int get_pnum();
+    string get_pnum();
     double get_cost();
 	string get_info(string allDetails);
     
