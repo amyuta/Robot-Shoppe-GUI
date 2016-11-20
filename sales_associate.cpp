@@ -12,6 +12,12 @@ string SalesAssociate::get_info(){
     
 }
 
+int SalesAssociate::get_SaNum() {
+	
+	return stoi(number);
+}
+
+
 void SalesAssociate::save_all(){
     
     ofstream ofs;

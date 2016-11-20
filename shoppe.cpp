@@ -7,6 +7,46 @@
 
 using namespace std;
 
+// method to find model placement in vector. If -1 is returned, then model is not in vector.
+int Shoppe::find_modelPlacement(int model_num) {
+
+	int i = 0, mod;
+
+	while (i < robot_models.size()) {
+
+		mod = robot_models[i].get_modNum();
+
+		if (mod == model_num) {
+			return i;
+		}
+		i++;
+	}
+
+	return -1;
+
+}
+
+// method to find Sales associate placement in vector. It -1 is returned, then SA is not in vector.
+int Shoppe::find_SaPlacement(int sa_num) {
+
+	int i = 0, sa;
+
+	while (i < sales_a.size()) {
+
+		sa = sales_a[i]->get_SaNum();
+
+		if (sa_num == sa) {
+
+			return i;
+		}
+		i++;
+	}
+
+	return -1;
+}
+
+
+
 void Shoppe::create_newpart(RobotPart* part, int type){
 
 
@@ -307,15 +347,18 @@ void Shoppe::paid_orders(int sa){
     
 }
 
-void Shoppe::list_order(int sales_a){
+string Shoppe::list_order(int sales_a){
     
     int i = 0;
+	string order = "";
     
     while(i < orders.size()){
-        cout << "\n(" << i+1 << ") ";
-        orders[i]->list_order(sales_a);
+       
+        order = orders[i]->list_order(sales_a);
         i++;
     }
+
+	return order;
 }
 
 

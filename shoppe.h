@@ -44,14 +44,17 @@ public:
     //method for orders
     void show_orders(string name, int num);
     void pay_order(int ord_num);
-    void list_order(int sales_a);
+    string list_order(int sales_a);
     void paid_orders(int sa);
 	int model_count();
+	int find_modelPlacement(int model_num);
+	int find_SaPlacement(int sa_num);
     
     //save
     void save_info();
 	void save_as_info(string filename);
 	void load_data();
+
 
     int type;
 

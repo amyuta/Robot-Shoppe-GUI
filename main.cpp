@@ -49,8 +49,13 @@ void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
 void loadchooseCB(Fl_Widget* w, void* p);
 void loadCB(Fl_Widget* w, void* p);
-void load_data();
+//void load_data();
+void cancel_orderCB(Fl_Widget* w, void* p);
+void create_orderCB(Fl_Widget* w, void* p);
+void cancel_saview(Fl_Widget* w, void* p);
 void load_choice_data(string filename);
+int sa_Sales(Fl_Widget* w, void* p);
+int sa_orders(Fl_Widget* w, void* p);
 int showCatalog(Fl_Widget* w, void* p);
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
@@ -75,10 +80,10 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
-Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso;;
+Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2;
 View *view;
 Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
@@ -214,7 +219,7 @@ void load_choice_data(string filename) { //load saved data
 
 
 	i = 0;
-	string c_name, c_num, sales_a;
+	string c_name, c_num, sales_a, address, phone, email;
 	getline(ifs, temp);
 	numcount = stoi(temp);
 
@@ -222,7 +227,10 @@ void load_choice_data(string filename) { //load saved data
 		getline(ifs, c_num);
 		getline(ifs, c_name);
 		getline(ifs, sales_a);
-		shoppe.add_customer(new Customer(c_name, c_num, sales_a));
+		getline(ifs, address);
+		getline(ifs, phone);
+		getline(ifs, email);
+		shoppe.add_customer(new Customer(c_name, c_num, sales_a, address, phone, email));
 		i++;
 	}
 
@@ -328,16 +336,16 @@ void load_choice_data(string filename) { //load saved data
 int createOrder(Fl_Widget* w, void* p) {
 	order = new Fl_Window(660, 500, "Create Robot Model Order");
 
-	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 400, 200); 
+	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 300, 200); 
 	{
-		Fl_Group* grup = new Fl_Group(20, 30, 280, 170, "Customers");
+		Fl_Group* grup = new Fl_Group(20, 30, 280, 570, "Customers");
 		{
 			string AllCusts = shoppe.list_cust();
 			char *testing = new char[AllCusts.length() + 1];
 			strcpy(testing, AllCusts.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 380 - 40, 180 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 280 - 40, 180 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
@@ -352,7 +360,7 @@ int createOrder(Fl_Widget* w, void* p) {
 			strcpy(testing, AllSa.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 380 - 40, 180 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 280 - 40, 180 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
@@ -367,7 +375,7 @@ int createOrder(Fl_Widget* w, void* p) {
 
 			if (counter == 0) {
 				Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 380, 60);
+				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 280, 60);
 				disp->buffer(buff);
 
 				buff->text("No Created Models");
@@ -378,7 +386,7 @@ int createOrder(Fl_Widget* w, void* p) {
 				strcpy(testing, modelInfo.c_str());
 
 				Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 80, "");
+				Fl_Text_Display *disp = new Fl_Text_Display(20, y, 280, 80, "");
 				disp->buffer(buff);
 
 				buff->text(testing);
@@ -390,6 +398,28 @@ int createOrder(Fl_Widget* w, void* p) {
 		grup3->end();
 	}
 	ordertabs->end();
+
+	o_model_number = new Fl_Input(425, 30, 210, 25, "Model #:");
+	o_model_number->align(FL_ALIGN_LEFT);
+
+	o_cust = new Fl_Input(425, 60, 210, 25, "Cust Name:");
+	o_cust->align(FL_ALIGN_LEFT);
+
+	o_cust_num = new Fl_Input(425, 90, 210, 25, "Cust #:");
+	o_cust_num->align(FL_ALIGN_LEFT);
+
+	o_sales = new Fl_Input(425, 120, 210, 25, "Associate #:");
+	o_sales->align(FL_ALIGN_LEFT);
+
+	o_num = new Fl_Input(425, 150, 210, 25, "Order #:");
+	o_num->align(FL_ALIGN_LEFT);
+
+	Fl_Return_Button *o_create = new Fl_Return_Button(425, 240, 120, 25, "Create");
+	o_create->callback((Fl_Callback *)create_orderCB, 0);
+
+	Fl_Button *o_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	o_cancel->callback((Fl_Callback *)cancel_orderCB, 0);
+
 	order->end();
 	order->show();
 	order->set_non_modal();
@@ -846,7 +876,7 @@ class Customer_Dialog {
 public:
 	Customer_Dialog() {
 
-		dialog = new Fl_Window(340, 150, "Customer");
+		dialog = new Fl_Window(340, 350, "Customer");
 
 		c_name = new Fl_Input(120, 10, 210, 25, "Name:");
 		c_name->align(FL_ALIGN_LEFT);
@@ -857,10 +887,19 @@ public:
 		sa_num = new Fl_Input(120, 70, 210, 25, "Sales Associate\nNumber:");
 		sa_num->align(FL_ALIGN_LEFT);
 
-		c_create = new Fl_Return_Button(145, 120, 120, 25, "Create");
+		address = new Fl_Input(120, 100, 210, 25, "Address:");
+		address->align(FL_ALIGN_LEFT);
+
+		phone = new Fl_Input(120, 130, 210, 25, "Phone Number:");
+		phone->align(FL_ALIGN_LEFT);
+
+		email = new Fl_Input(120, 160, 210, 25, "Email:");
+		email->align(FL_ALIGN_LEFT);
+
+		c_create = new Fl_Return_Button(145, 190, 120, 25, "Create");
 		c_create->callback((Fl_Callback *)create_custCB, 0);
 
-		c_cancel = new Fl_Button(270, 120, 60, 25, "Cancel");
+		c_cancel = new Fl_Button(270, 190, 60, 25, "Cancel");
 		c_cancel->callback((Fl_Callback *)cancel_custCB, 0);
 
 		dialog->end();
@@ -872,12 +911,18 @@ public:
 	string cust_name() { return c_name->value(); }
 	string cust_number() { return c_num->value(); }
 	string sa_number() { return sa_num->value(); }
+	string cust_address() { return address->value(); }
+	string cust_phone() { return phone->value(); }
+	string cust_email() { return email->value(); }
 
 private:
 	Fl_Window *dialog;
 	Fl_Input *c_name;
 	Fl_Input *c_num;
 	Fl_Input *sa_num;
+	Fl_Input *address;
+	Fl_Input *phone;
+	Fl_Input *email;
 
 	Fl_Return_Button *c_create;
 	Fl_Button *c_cancel;
@@ -952,6 +997,91 @@ int sa_View(Fl_Widget* w, void* p) {
 	// Wrap it up and let FLTK do its thing
 	saReports->end();
 	saReports->show();
+	return(Fl::run());
+}
+
+int sa_Sales(Fl_Widget* w, void* p) {
+	const int X = 700;
+	const int Y = 500;
+	const int border = 10;
+
+	saSales = new Fl_Window{ X, Y, "Orders By Sales Associate" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	saSales->resizable(*view);
+
+	//Turn string into Char array
+	string AllSa = shoppe.list_sa();
+	char *testing = new char[AllSa.length() + 1];
+	strcpy(testing, AllSa.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Sales Associate List");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 75);
+	disp2->buffer(buff2);
+	win->resizable(*disp2);
+	win->show();
+	buff2->text("Enter the name and number\nof the Sales Associate you\nwish to view the orders of.");
+
+	sa_name2 = new Fl_Input(425, 125, 210, 25, "Name:");
+	sa_name2->align(FL_ALIGN_LEFT);
+
+	sa_num2 = new Fl_Input(425, 155, 210, 25, "Number:");
+	sa_num2->align(FL_ALIGN_LEFT);
+
+	Fl_Return_Button *view_saorder = new Fl_Return_Button(425, 240, 120, 25, "View Orders");
+	view_saorder->callback((Fl_Callback *)sa_orders, 0);
+
+	Fl_Button *o_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	o_cancel->callback((Fl_Callback *)cancel_saview, 0);
+
+	// Wrap it up and let FLTK do its thing
+	saSales->end();
+	saSales->show();
+	return(Fl::run());
+}
+
+int sa_orders(Fl_Widget* w, void* p) {
+	const int X = 350;
+	const int Y = 500;
+	const int border = 10;
+	int placement;
+
+	saSales2 = new Fl_Window{ X, Y, "Orders By Sales Associate" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	saSales2->resizable(*view);
+
+	//Find SA placement in vector
+	placement = shoppe.find_SaPlacement(stoi(sa_num2->value()));
+
+	//Turn string into Char array
+	string AllOrder = shoppe.list_order(placement);
+	char *testing = new char[AllOrder.length() + 1];
+	strcpy(testing, AllOrder.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Sales Associate Orders");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	// Wrap it up and let FLTK do its thing
+	saSales2->end();
+	saSales2->show();
 	return(Fl::run());
 }
 
@@ -1045,6 +1175,13 @@ void cancel_modelCB(Fl_Widget* w, void* p) {
 	models->hide();
 }
 
+void cancel_orderCB(Fl_Widget* w, void* p) {
+	order->hide();
+}
+void cancel_saview(Fl_Widget* w, void* p) {
+	saSales->hide();
+}
+
 void cancel_custCB(Fl_Widget* w, void* p) {
 	cust_dlg->hide();
 }
@@ -1075,6 +1212,34 @@ void create_modelCB(Fl_Widget* w, void* p) {
 	shoppe.make_model(head-1, arm-1, batt-1, loco-1, torso-1, rm_part_number->value(), rm_name->value());
 
 	models->hide();
+}
+
+void create_orderCB(Fl_Widget* w, void* p) {
+
+	int mod, sa;
+	int ord = stoi(o_num->value());
+	int cust = stoi(o_cust_num->value());
+
+
+	mod = shoppe.find_modelPlacement(stoi(o_model_number->value()));
+	sa = shoppe.find_SaPlacement(stoi(o_sales->value()));
+
+	if (mod != -1 || sa != -1) {
+
+		shoppe.add_order(new Order(ord, mod, o_cust->value(), cust, sa), mod);
+	}
+	else {
+		int selection = 1;
+		if (!view->dataDownload()) {
+			selection = fl_choice("Not enough data. Try again.", 0, fl_yes, 0);
+		}
+		if (selection == 1) {
+			order->hide();
+		}
+		
+	}
+
+	order->hide();
 }
 
 void create_armCB(Fl_Widget* w, void* p) {
@@ -1127,7 +1292,7 @@ void create_torsoCB(Fl_Widget* w, void* p) {
 
 void create_custCB(Fl_Widget* w, void* p) {
 
-	shoppe.add_customer(new Customer(cust_dlg->cust_name(), cust_dlg->cust_number(), cust_dlg->sa_number()));
+	shoppe.add_customer(new Customer(cust_dlg->cust_name(), cust_dlg->cust_number(), cust_dlg->sa_number(), cust_dlg->cust_address(), cust_dlg->cust_phone(), cust_dlg->cust_email()));
 
 	cust_dlg->hide();
 
@@ -1217,14 +1382,12 @@ Fl_Menu_Item menuitems[] = {
 	{ 0 },
 
 { "&Report", 0, 0, 0, FL_SUBMENU },
-	{ "Invoice", 0,0,0,FL_MENU_DIVIDER },
-	{ "All Orders" },
-	{ "Orders by Customer" },
-	{ "Orders by Sales Associate", 0,0,0,FL_MENU_DIVIDER },
+	{ "Invoices", 0,0,0,FL_MENU_DIVIDER },
+	{ "Orders by Customers", 0, 0,0 },
+	{ "Orders by Sales Associate", 0,(Fl_Callback *)sa_Sales,0,FL_MENU_DIVIDER },
 	{ "All Customers", 0, (Fl_Callback *)customer_View},
 	{ "All Sales Associates" , 0,(Fl_Callback *)sa_View,0,FL_MENU_DIVIDER },
 	{ "All Robot Models", 0, (Fl_Callback *)showCatalog },
-	{ "All Robot Parts" },
 	{ 0 },
 
 { "&Login", 0, 0, 0, FL_SUBMENU },

@@ -13,6 +13,9 @@ void Customer::save_all(){
             ofs << number << endl;
             ofs << name << endl;
             ofs << sales_a << endl;
+			ofs << address << endl;
+			ofs << phone << endl;
+			ofs << email << endl;
 
             ofs.close();
 }
@@ -25,6 +28,9 @@ void Customer::save_as_all(string filename) {
 	ofs << number << endl;
 	ofs << name << endl;
 	ofs << sales_a << endl;
+	ofs << address << endl;
+	ofs << phone << endl;
+	ofs << email << endl;
 
 	ofs.close();
 }
@@ -37,6 +43,8 @@ string Customer::get_info() {
 	allDetails = name + "\n    Customer #: " + number + "\n    Sales Associate #: " + sales_a;
 	return allDetails;
 }
+
+
 
 
 

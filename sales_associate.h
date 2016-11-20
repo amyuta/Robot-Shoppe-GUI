@@ -13,6 +13,7 @@ public:
     string get_info();
     void raisecheck();
     void raise_final();
+	int get_SaNum();
     
 private:
     string name;

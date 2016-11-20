@@ -10,6 +10,11 @@
 
 using namespace std;
 
+int Robot_Model::get_modNum() {
+	return stoi(model_num);
+}
+
+
 void Robot_Model:: make_robotmodel(RobotPart head, RobotPart arm, RobotPart battery, RobotPart loco, RobotPart torso){
     
     parts.push_back(head);

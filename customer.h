@@ -9,7 +9,7 @@ class Customer {
 
     friend SalesAssociate;
 public:
-    Customer(string c_name, string c_num, string sales_a) : name(c_name), number(c_num), sales_a(sales_a) {}
+    Customer(string c_name, string c_num, string sales_a, string add, string phone, string email) : name(c_name), number(c_num), sales_a(sales_a), address(add), phone(phone), email(email)  {}
 
 	string get_info();
 	//string get_num();
@@ -21,6 +21,9 @@ protected:
     string name;
     string number;
     string sales_a;
+	string address;
+	string phone;
+	string email;
     //Order order;
 
 };

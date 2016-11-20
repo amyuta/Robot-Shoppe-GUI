@@ -53,16 +53,25 @@ void Order::pay_now(){
     paid = true;
 }
 
-void Order::list_order(int sales_as){
+string Order::list_order(int sales_as){
     
+	string order = "";
+
     if(sales_a == sales_as){
         
-        cout <<  "Robot Model: " <<model << endl << "    Order Number: " << order_num << endl << "    ";
-        order_paid();
+		order = "Order Number: " + to_string(order_num) + "\n    Customer: " + name + "\n    Cost: " + to_string(total_cost);
+
+		if (paid) {
+
+			order = order + "\n    Paid\n\n";
+		}
+		else {
+			order = order + "\n    Not Paid\n\n";
+		}
  
     }
     else{
-        return;
+        return order;
     }
     
 }
