@@ -53,9 +53,12 @@ void loadCB(Fl_Widget* w, void* p);
 void cancel_orderCB(Fl_Widget* w, void* p);
 void create_orderCB(Fl_Widget* w, void* p);
 void cancel_saview(Fl_Widget* w, void* p);
+void cancel_custview(Fl_Widget* w, void* p);
 void load_choice_data(string filename);
 int sa_Sales(Fl_Widget* w, void* p);
 int sa_orders(Fl_Widget* w, void* p);
+int cust_Sales(Fl_Widget* w, void* p);
+int cust_orders(Fl_Widget* w, void* p);
 int showCatalog(Fl_Widget* w, void* p);
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
@@ -65,6 +68,7 @@ void cancel_custCB(Fl_Widget* w, void* p);
 void create_saCB(Fl_Widget* w, void* p);
 void cancel_saCB(Fl_Widget* w, void* p);
 int createModel(Fl_Widget* w, void* p);
+
 
 class Robot_Part_Dialog;
 class Head_Dialog;
@@ -80,10 +84,10 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2, *custSales, *custSales2;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
-Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2;
+Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2, *cust_name2, *cust_num2;
 View *view;
 Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
@@ -249,64 +253,68 @@ void load_choice_data(string filename) { //load saved data
 
 
 	i = 0;
+	string model_num;
 	int price;
 	string check;
 	int headm, armm, torsom, battm, locom;
-	string name, model_num;
+	string name;
 	getline(ifs, temp);
 	numcount = stoi(temp);
 
 	while (i < numcount) {
 		getline(ifs, name);
-		getline(ifs, model_num);
+		getline(ifs, temp);
+		model_num = temp;
 
 		getline(ifs, temp);
 		price = stoi(temp);
 
-		getline(ifs, check);
+		getline(ifs, temp);
+		check = temp; // part number
 		headm = shoppe.searchfor_part(1, check);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 
-		getline(ifs, check);
-		//check = stoi(temp);
+		getline(ifs, temp);
+		check = temp;
 		armm = shoppe.searchfor_part(2, check);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
-		getline(ifs, check);
+		getline(ifs, temp);
 
-		//check = stoi(temp);
+		check = temp;
 		battm = shoppe.searchfor_part(3, check);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
-		getline(ifs, check);
+		getline(ifs, temp);
 
-		//check = stoi(temp);
+		check = temp;
 		locom = shoppe.searchfor_part(4, check);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
-		getline(ifs, check);
+		getline(ifs, temp);
 		//getline(ifs, temp);
 
-		//check = stoi(temp);
+		check = temp;
 		torsom = shoppe.searchfor_part(5, check);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
 		getline(ifs, temp);
-		getline(ifs, temp);
+		//getline(ifs, temp);
 
 		shoppe.make_model(headm, armm, battm, locom, torsom, model_num, name);
 		i++;
 	}
+
 
 	/*
 	i = 0;
@@ -1058,6 +1066,7 @@ int sa_orders(Fl_Widget* w, void* p) {
 
 	saSales2 = new Fl_Window{ X, Y, "Orders By Sales Associate" };
 	view = new View{ 0, 0, X, Y };
+	saSales->hide();
 
 	// Sign up for callback
 	//test->callback(CloseCB, view);
@@ -1085,12 +1094,95 @@ int sa_orders(Fl_Widget* w, void* p) {
 	return(Fl::run());
 }
 
+int cust_Sales(Fl_Widget* w, void* p) {
+	const int X = 700;
+	const int Y = 500;
+	const int border = 10;
+
+	custSales = new Fl_Window{ X, Y, "Orders By Customers" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	custSales->resizable(*view);
+
+	//Turn string into Char array
+	string AllCusts = shoppe.list_cust();
+	char *testing = new char[AllCusts.length() + 1];
+	strcpy(testing, AllCusts.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Customer List");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 75);
+	disp2->buffer(buff2);
+	win->resizable(*disp2);
+	win->show();
+	buff2->text("Enter the name and number\nof the Customer you\nwish to view the orders of.");
+
+	cust_name2 = new Fl_Input(425, 125, 210, 25, "Name:");
+	cust_name2->align(FL_ALIGN_LEFT);
+
+	cust_num2 = new Fl_Input(425, 155, 210, 25, "Number:");
+	cust_num2->align(FL_ALIGN_LEFT);
+
+	Fl_Return_Button *view_custorder = new Fl_Return_Button(425, 240, 120, 25, "View Orders");
+	view_custorder->callback((Fl_Callback *)cust_orders, 0);
+
+	Fl_Button *cust_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	cust_cancel->callback((Fl_Callback *)cancel_custview, 0);
+
+	// Wrap it up and let FLTK do its thing
+	custSales->end();
+	custSales->show();
+	return(Fl::run());
+}
+
+int cust_orders(Fl_Widget* w, void* p) {
+	const int X = 350;
+	const int Y = 500;
+	const int border = 10;
+	int cnum = stoi(cust_num2->value());
+
+	custSales2 = new Fl_Window{ X, Y, "Orders By Customer" };
+	view = new View{ 0, 0, X, Y };
+	custSales->hide();
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	custSales2->resizable(*view);
+
+	//Turn string into Char array
+	string AllOrder = shoppe.list_custOrder(cnum);
+	char *testing = new char[AllOrder.length() + 1];
+	strcpy(testing, AllOrder.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "Customer Orders");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	// Wrap it up and let FLTK do its thing
+	custSales2->end();
+	custSales2->show();
+	return(Fl::run());
+}
+
 int customer_View(Fl_Widget* w, void* p) {
 	const int X = 800;
 	const int Y = 600;
 	const int border = 10;
 	
-	custReports = new Fl_Window{ X, Y, "Robot Shoppe" };
+	custReports = new Fl_Window{ X, Y, "View All Customers" };
 	view = new View{ 0, 0, X, Y };
 
 	// Sign up for callback
@@ -1181,6 +1273,9 @@ void cancel_orderCB(Fl_Widget* w, void* p) {
 void cancel_saview(Fl_Widget* w, void* p) {
 	saSales->hide();
 }
+void cancel_custview(Fl_Widget* w, void* p) {
+	custSales->hide();
+}
 
 void cancel_custCB(Fl_Widget* w, void* p) {
 	cust_dlg->hide();
@@ -1223,6 +1318,7 @@ void create_orderCB(Fl_Widget* w, void* p) {
 
 	mod = shoppe.find_modelPlacement(stoi(o_model_number->value()));
 	sa = shoppe.find_SaPlacement(stoi(o_sales->value()));
+	cout << sa << endl;
 
 	if (mod != -1 || sa != -1) {
 
@@ -1383,7 +1479,7 @@ Fl_Menu_Item menuitems[] = {
 
 { "&Report", 0, 0, 0, FL_SUBMENU },
 	{ "Invoices", 0,0,0,FL_MENU_DIVIDER },
-	{ "Orders by Customers", 0, 0,0 },
+	{ "Orders by Customers", 0, (Fl_Callback *)cust_Sales,0 },
 	{ "Orders by Sales Associate", 0,(Fl_Callback *)sa_Sales,0,FL_MENU_DIVIDER },
 	{ "All Customers", 0, (Fl_Callback *)customer_View},
 	{ "All Sales Associates" , 0,(Fl_Callback *)sa_View,0,FL_MENU_DIVIDER },

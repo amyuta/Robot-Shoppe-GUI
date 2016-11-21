@@ -49,6 +49,7 @@ public:
 	int model_count();
 	int find_modelPlacement(int model_num);
 	int find_SaPlacement(int sa_num);
+	string list_custOrder(int cnum);
     
     //save
     void save_info();

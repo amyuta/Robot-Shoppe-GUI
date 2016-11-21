@@ -47,6 +47,7 @@ int Shoppe::find_SaPlacement(int sa_num) {
 
 
 
+
 void Shoppe::create_newpart(RobotPart* part, int type){
 
 
@@ -354,7 +355,7 @@ string Shoppe::list_order(int sales_a){
     
     while(i < orders.size()){
        
-        order = orders[i]->list_order(sales_a);
+        order = order + orders[i]->list_order(sales_a) + "\n";
         i++;
     }
 
@@ -381,6 +382,23 @@ string Shoppe::list_cust(){
 
 	return allCust;
 }
+
+string Shoppe::list_custOrder(int cnum) {
+
+	int i = 0;
+	string allCust = "";
+
+	while (i < orders.size()) {
+
+		allCust = allCust + orders[i]->cust_order(cnum) + "\n";
+		i++;
+	}
+
+	return allCust;
+}
+
+
+
 
 int Shoppe::searchfor_part(int type, string num){
 

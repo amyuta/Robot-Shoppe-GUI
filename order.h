@@ -17,6 +17,7 @@ public:
     void save_all();
     string list_order(int sales_as);
     bool paid_order(int sales_as);
+	string cust_order(int cnum);
 
 private:
     int order_num;

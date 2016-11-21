@@ -1,6 +1,10 @@
 #include "order.h"
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <ostream>
+#include <sstream>
+
 
 using namespace std;
 
@@ -56,10 +60,12 @@ void Order::pay_now(){
 string Order::list_order(int sales_as){
     
 	string order = "";
+	stringstream s;
+	s << setprecision(3) << total_cost;
 
     if(sales_a == sales_as){
         
-		order = "Order Number: " + to_string(order_num) + "\n    Customer: " + name + "\n    Cost: " + to_string(total_cost);
+		order = "Order Number: " + to_string(order_num) + "\n    Customer: " + name + "\n    Cost: $" + s.str();
 
 		if (paid) {
 
@@ -68,6 +74,8 @@ string Order::list_order(int sales_as){
 		else {
 			order = order + "\n    Not Paid\n\n";
 		}
+
+		return order;
  
     }
     else{
@@ -75,6 +83,34 @@ string Order::list_order(int sales_as){
     }
     
 }
+
+string Order::cust_order(int cnum) {
+	string order = "";
+	stringstream s;
+	s << setprecision(3) << total_cost;
+
+	if (cnum == num) {
+
+		order = "Order Number: " + to_string(order_num) + "\n    Customer: " + name + "\n    Cost: $" + s.str();
+
+		if (paid) {
+
+			order = order + "\n    Paid\n\n";
+		}
+		else {
+			order = order + "\n    Not Paid\n\n";
+		}
+
+		return order;
+
+	}
+	else {
+		return order;
+	}
+
+}
+
+
 
 bool Order::paid_order(int sales_as){
     
