@@ -13,11 +13,12 @@ public:
     void get_price(double price);
     void show_order(string name, int c_num);
     void order_paid();
-    void pay_now();
+    void pay_now(int ord);
     void save_all();
     string list_order(int sales_as);
     bool paid_order(int sales_as);
 	string cust_order(int cnum);
+	string allOrder();
 
 private:
     int order_num;

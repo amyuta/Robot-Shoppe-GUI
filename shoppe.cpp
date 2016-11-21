@@ -325,8 +325,14 @@ void Shoppe::show_orders(string name, int num){
 }
 
 void Shoppe:: pay_order(int ord_num){
-    
-    orders[ord_num]->pay_now();
+	int i = 0;
+
+	while (i < orders.size()) {
+
+		orders[i]->pay_now(ord_num);
+		i++;
+	
+	}
 }
 
 void Shoppe::paid_orders(int sa){
@@ -395,6 +401,20 @@ string Shoppe::list_custOrder(int cnum) {
 	}
 
 	return allCust;
+}
+
+string Shoppe::AllOrder() {
+
+	int i = 0;
+	string allOrder = "";
+
+	while (i < orders.size()) {
+
+		allOrder = allOrder + orders[i]->allOrder() + "\n";
+		i++;
+	}
+
+	return allOrder;
 }
 
 

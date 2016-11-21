@@ -31,7 +31,6 @@
 #include "RobotPart.h"
 #include "customer.h"
 #include "sales_associate.h"
-#include "controller.h"
 
 
 //
@@ -47,6 +46,7 @@ void create_locoCB(Fl_Widget* w, void* p);
 void cancel_locoCB(Fl_Widget* w, void* p);
 void create_torsoCB(Fl_Widget* w, void* p);
 void cancel_torsoCB(Fl_Widget* w, void* p);
+void cancel_billview(Fl_Widget* w, void* p);
 void loadchooseCB(Fl_Widget* w, void* p);
 void loadCB(Fl_Widget* w, void* p);
 //void load_data();
@@ -60,14 +60,17 @@ int sa_orders(Fl_Widget* w, void* p);
 int cust_Sales(Fl_Widget* w, void* p);
 int cust_orders(Fl_Widget* w, void* p);
 int showCatalog(Fl_Widget* w, void* p);
+void bill_orders();
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
 int createOrder(Fl_Widget* w, void* p);
 void create_custCB(Fl_Widget* w, void* p);
+int all_invoices(Fl_Widget* w, void* p);
 void cancel_custCB(Fl_Widget* w, void* p);
 void create_saCB(Fl_Widget* w, void* p);
 void cancel_saCB(Fl_Widget* w, void* p);
 int createModel(Fl_Widget* w, void* p);
+void view_manual();
 
 
 class Robot_Part_Dialog;
@@ -84,10 +87,10 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2, *custSales, *custSales2;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2, *custSales, *custSales2, *invoice1;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
-Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2, *cust_name2, *cust_num2;
+Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2, *cust_name2, *cust_num2, *invoice_num;
 View *view;
 Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
@@ -342,9 +345,9 @@ void load_choice_data(string filename) { //load saved data
 }
 
 int createOrder(Fl_Widget* w, void* p) {
-	order = new Fl_Window(660, 500, "Create Robot Model Order");
+	order = new Fl_Window(660, 550, "Create Robot Model Order");
 
-	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 300, 200); 
+	Fl_Tabs* ordertabs = new Fl_Tabs(10, 10, 300, 500); 
 	{
 		Fl_Group* grup = new Fl_Group(20, 30, 280, 570, "Customers");
 		{
@@ -353,14 +356,14 @@ int createOrder(Fl_Widget* w, void* p) {
 			strcpy(testing, AllCusts.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 280 - 40, 180 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 300 - 40, 500 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
 			buff->text(testing);
 		}
 		grup->end();
-		Fl_Group* grup2 = new Fl_Group(20, 30, 280, 170, "Sales Associates");
+		Fl_Group* grup2 = new Fl_Group(20, 30, 280, 570, "Sales Associates");
 		{
 			//Turn string into Char array
 			string AllSa = shoppe.list_sa();
@@ -368,7 +371,7 @@ int createOrder(Fl_Widget* w, void* p) {
 			strcpy(testing, AllSa.c_str());
 
 			Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 280 - 40, 180 - 40);
+			Fl_Text_Display *disp = new Fl_Text_Display(20, 40, 300 - 40, 500 - 40);
 			disp->buffer(buff);
 			win->resizable(*disp);
 			win->show();
@@ -376,7 +379,7 @@ int createOrder(Fl_Widget* w, void* p) {
 
 		}
 		grup2->end();
-		Fl_Group* grup3 = new Fl_Group(20, 30, 280, 170, "Models");
+		Fl_Group* grup3 = new Fl_Group(20, 30, 280, 570, "Models");
 		{
 			int counter = shoppe.model_count();
 			int y = 40;
@@ -978,7 +981,7 @@ private:
 // Callbacks
 //
 int sa_View(Fl_Widget* w, void* p) {
-	const int X = 800;
+	const int X = 400;
 	const int Y = 600;
 	const int border = 10;
 
@@ -996,7 +999,7 @@ int sa_View(Fl_Widget* w, void* p) {
 	strcpy(testing, AllSa.c_str());
 
 	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40, "Sales Associate List");
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 400 - 40, 600 - 40, "Sales Associate List");
 	disp->buffer(buff);
 	win->resizable(*disp);
 	win->show();
@@ -1094,6 +1097,69 @@ int sa_orders(Fl_Widget* w, void* p) {
 	return(Fl::run());
 }
 
+int all_invoices(Fl_Widget* w, void* p) {
+	const int X = 700;
+	const int Y = 500;
+	const int border = 10;
+
+	invoice1 = new Fl_Window{ X, Y, "View All Unpaid Invoices" };
+	view = new View{ 0, 0, X, Y };
+
+	// Sign up for callback
+	//test->callback(CloseCB, view);
+	// Enable resizing
+	invoice1->resizable(*view);
+
+	//Turn string into Char array
+	string AllOrder = shoppe.AllOrder();
+	char *testing = new char[AllOrder.length() + 1];
+	strcpy(testing, AllOrder.c_str());
+
+	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 340 - 40, 480 - 40, "All Unpaid Invoices");
+	disp->buffer(buff);
+	win->resizable(*disp);
+	win->show();
+	buff->text(testing);
+
+	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 75);
+	disp2->buffer(buff2);
+	win->resizable(*disp2);
+	win->show();
+	buff2->text("Enter the order number\nof the bill that you\nwish to mark as paid.");
+
+	invoice_num = new Fl_Input(425, 125, 210, 25, "Order #:");
+	invoice_num->align(FL_ALIGN_LEFT);
+
+	Fl_Return_Button *view_unpaid = new Fl_Return_Button(425, 240, 120, 25, "Pay Bill");
+	view_unpaid->callback((Fl_Callback *)bill_orders, 0);
+
+	Fl_Button *bill_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	bill_cancel->callback((Fl_Callback *)cancel_billview, 0);
+
+	// Wrap it up and let FLTK do its thing
+	invoice1->end();
+	invoice1->show();
+	return(Fl::run());
+}
+
+void bill_orders() {
+
+	int order = stoi(invoice_num->value());
+	shoppe.pay_order(order);
+	invoice1->hide();
+}
+
+void view_manual() {
+
+	ShellExecute(0, 0, L"http://omega.uta.edu/~amb0432/Robot%20Shoppe%20GUI%20User%20Manual.pdf", 0, 0, SW_SHOW);
+}
+
+
+
+
+
 int cust_Sales(Fl_Widget* w, void* p) {
 	const int X = 700;
 	const int Y = 500;
@@ -1178,7 +1244,7 @@ int cust_orders(Fl_Widget* w, void* p) {
 }
 
 int customer_View(Fl_Widget* w, void* p) {
-	const int X = 800;
+	const int X = 400;
 	const int Y = 600;
 	const int border = 10;
 	
@@ -1196,7 +1262,7 @@ int customer_View(Fl_Widget* w, void* p) {
 	strcpy(testing, AllCusts.c_str());
 
 	Fl_Text_Buffer *buff = new Fl_Text_Buffer();
-	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 640 - 40, 480 - 40, "Customer List");
+	Fl_Text_Display *disp = new Fl_Text_Display(20, 20, 400 - 40, 600 - 40, "Customer List");
 	disp->buffer(buff);
 	win->resizable(*disp);
 	win->show();
@@ -1255,6 +1321,9 @@ void cancel_armCB(Fl_Widget* w, void* p) {
 }
 void cancel_battCB(Fl_Widget* w, void* p) {
 	batt_dlg->hide();
+}
+void cancel_billview(Fl_Widget* w, void* p) {
+	invoice1->hide();
 }
 void cancel_locoCB(Fl_Widget* w, void* p) {
 	loco_dlg->hide();
@@ -1478,7 +1547,7 @@ Fl_Menu_Item menuitems[] = {
 	{ 0 },
 
 { "&Report", 0, 0, 0, FL_SUBMENU },
-	{ "Invoices", 0,0,0,FL_MENU_DIVIDER },
+	{ "Invoices", 0,(Fl_Callback *)all_invoices,0,FL_MENU_DIVIDER },
 	{ "Orders by Customers", 0, (Fl_Callback *)cust_Sales,0 },
 	{ "Orders by Sales Associate", 0,(Fl_Callback *)sa_Sales,0,FL_MENU_DIVIDER },
 	{ "All Customers", 0, (Fl_Callback *)customer_View},
@@ -1486,16 +1555,8 @@ Fl_Menu_Item menuitems[] = {
 	{ "All Robot Models", 0, (Fl_Callback *)showCatalog },
 	{ 0 },
 
-{ "&Login", 0, 0, 0, FL_SUBMENU },
-	{ "As Product Manager" },
-	{ "As Beloved Customer" },
-	{ "As Sales Associate" },
-	{ "As Pointed-Haired Boss" },
-	{ 0 },
-
 { "&Help", 0, 0, 0, FL_SUBMENU },
-	{ "&Manual" },
-	{ "&About" },
+	{ "&Manual", 0, (Fl_Callback *)view_manual },
 	{ 0 },
 };
 

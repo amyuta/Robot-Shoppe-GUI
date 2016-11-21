@@ -53,8 +53,10 @@ void Order::order_paid(){
     
 }
 
-void Order::pay_now(){
-    paid = true;
+void Order::pay_now(int ord){
+	if (order_num == ord) {
+		paid = true;
+	}
 }
 
 string Order::list_order(int sales_as){
@@ -110,6 +112,21 @@ string Order::cust_order(int cnum) {
 
 }
 
+string Order::allOrder() {
+	string order = "";
+	stringstream s;
+	s << setprecision(3) << total_cost;
+
+	if (!paid) {
+		order = "Order Number: " + to_string(order_num) + "\n    Customer: " + name + "\n    Cost: $" + s.str() + "\n    Not Paid\n\n";
+		 
+	}
+	
+
+	return order;
+
+
+}
 
 
 bool Order::paid_order(int sales_as){
