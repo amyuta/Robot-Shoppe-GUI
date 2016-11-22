@@ -49,6 +49,7 @@ void cancel_torsoCB(Fl_Widget* w, void* p);
 void cancel_billview(Fl_Widget* w, void* p);
 void loadchooseCB(Fl_Widget* w, void* p);
 void loadCB(Fl_Widget* w, void* p);
+void cancel_p(Fl_Widget* w, void* p);
 //void load_data();
 void cancel_orderCB(Fl_Widget* w, void* p);
 void create_orderCB(Fl_Widget* w, void* p);
@@ -88,13 +89,13 @@ class SalesAssociate_Dialog;
 //
 // Widgets
 //
-Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2, *custSales, *custSales2, *invoice1;
+Fl_Window *win, *custReports, *saReports, *models, *catalog, *order, *loader, *saSales, *saSales2, *custSales, *custSales2, *invoice1, *images;
 Fl_Menu_Bar *menubar;
 Fl_Box *box;
-Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *sa_num2, *cust_name2, *cust_num2, *invoice_num;
+Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head, *rm_arm, *rm_batt, *rm_loco, *rm_torso, *o_model_number, *o_cust, *o_cust_num, *o_sales, *o_num, *sa_name2, *rm_image, *sa_num2, *cust_name2, *cust_num2, *invoice_num;
 View *view;
-Fl_Box *jpgbox;
-Fl_JPEG_Image *weljpg;
+Fl_Box *jpgbox, *box1, *box2, *box3, *box4, *box5, *box6;
+Fl_JPEG_Image *weljpg, *mod1, *mod2, *mod3, *mod4, *mod5, *mod6;
 //Robot_Part_Dialog *rp_dlg;
 Head_Dialog *head_dlg;
 Arm_Dialog *arm_dlg;
@@ -107,6 +108,44 @@ Model_Dialog *model_dlg;
 Customer_Dialog *cust_dlg;
 SalesAssociate_Dialog *sa_dlg;
 Shoppe shoppe;
+
+int show_model_images(Fl_Widget* w, void* p) {
+	images = new Fl_Window{ 500, 400, "Robot Model Images" };
+
+
+	box1 = new Fl_Box(75, 75, 50, 50, "1");
+	mod1 = new Fl_JPEG_Image("1.jpg");
+	box1->image(mod1);
+
+	box2 = new Fl_Box(225, 75, 50, 50, "2");
+	mod2 = new Fl_JPEG_Image("2.jpg");
+	box2->image(mod2);
+
+	box3 = new Fl_Box(375, 75, 50, 50, "3");
+	mod3 = new Fl_JPEG_Image("3.jpg");
+	box3->image(mod3);
+
+	box4 = new Fl_Box(75, 200, 50, 50, "4");
+	mod4 = new Fl_JPEG_Image("4.jpg");
+	box4->image(mod4);
+
+	box5 = new Fl_Box(225, 200, 50, 50, "5");
+	mod5 = new Fl_JPEG_Image("5.jpg");
+	box5->image(mod5);
+
+	box6 = new Fl_Box(375, 200, 50, 50, "6");
+	mod6 = new Fl_JPEG_Image("6.jpg");
+	box6->image(mod6);
+
+	Fl_Button *pcancel = new Fl_Button(225, 350, 60, 25, "Close");
+	pcancel->callback((Fl_Callback *)cancel_p, 0);
+
+	images->end();
+	images->show();
+	images->set_non_modal();
+
+	return(Fl::run());
+}
 
 
 void load_choice_data(string filename) { //load saved data
@@ -261,12 +300,13 @@ void load_choice_data(string filename) { //load saved data
 	int price;
 	string check;
 	int headm, armm, torsom, battm, locom;
-	string name;
+	string name, image;
 	getline(ifs, temp);
 	numcount = stoi(temp);
 
 	while (i < numcount) {
 		getline(ifs, name);
+		getline(ifs, image);
 		getline(ifs, temp);
 		model_num = temp;
 
@@ -315,7 +355,7 @@ void load_choice_data(string filename) { //load saved data
 		getline(ifs, temp);
 		//getline(ifs, temp);
 
-		shoppe.make_model(headm, armm, battm, locom, torsom, model_num, name);
+		shoppe.make_model(headm, armm, battm, locom, torsom, model_num, name, image);
 		i++;
 	}
 
@@ -447,7 +487,7 @@ int createOrder(Fl_Widget* w, void* p) {
 }
 
 int showCatalog(Fl_Widget* w, void* p) {
-	catalog = new Fl_Window(660, 500, "Robot Model Catalog");
+	catalog = new Fl_Window(660, 475, "Robot Model Catalog");
 
 	int counter = shoppe.model_count();
 	int y = 30;
@@ -467,6 +507,12 @@ int showCatalog(Fl_Widget* w, void* p) {
 		Fl_Text_Buffer *buff = new Fl_Text_Buffer();
 		Fl_Text_Display *disp = new Fl_Text_Display(20, y, 400, 80, "");
 		disp->buffer(buff);
+
+		string imagename = shoppe.image_view(i);
+
+		box1 = new Fl_Box(450, y+15, 50, 50);
+		mod1 = new Fl_JPEG_Image(imagename.c_str());
+		box1->image(mod1);
 
 		buff->text(testing);
 
@@ -493,37 +539,43 @@ int createModel(Fl_Widget* w, void* p) {
 	buff->text(testing);
 
 	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
-	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 100);
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 125);
 	disp2->buffer(buff2);
 	win->resizable(*disp2);
 	win->show();
-	buff2->text("Use the info to the right to\nget the parts that you will\ninclude in this model.\nCreate a model #. Do not\nleave any fields empty.");
+	buff2->text("Use the info to the right to\nget the parts that you will\ninclude in this model.\nCreate a model #. Do not\nleave any fields empty. View\nimages by selecting the\nbutton at the bottom. ");
 
-	rm_part_number = new Fl_Input(425, 140, 210, 25, "Model #:");
+	rm_part_number = new Fl_Input(425, 165, 210, 25, "Model #:");
 	rm_part_number->align(FL_ALIGN_LEFT);
 
-	rm_name = new Fl_Input(425, 170, 210, 25, "Model Name:");
+	rm_name = new Fl_Input(425, 195, 210, 25, "Model Name:");
 	rm_name->align(FL_ALIGN_LEFT);
 
-	rm_head = new Fl_Input(425, 200, 210, 25, "Head #:");
+	rm_head = new Fl_Input(425, 225, 210, 25, "Head #:");
 	rm_head->align(FL_ALIGN_LEFT);
 
-	rm_arm = new Fl_Input(425, 230, 210, 25, "Arm #:");
+	rm_arm = new Fl_Input(425, 255, 210, 25, "Arm #:");
 	rm_arm->align(FL_ALIGN_LEFT);
 
-	rm_batt = new Fl_Input(425, 260, 210, 25, "Battery #:");
+	rm_batt = new Fl_Input(425, 285, 210, 25, "Battery #:");
 	rm_batt->align(FL_ALIGN_LEFT);
 
-	rm_loco = new Fl_Input(425, 290, 210, 25, "Locomotor #:");
+	rm_loco = new Fl_Input(425, 315, 210, 25, "Locomotor #:");
 	rm_loco->align(FL_ALIGN_LEFT);
 
-	rm_torso = new Fl_Input(425, 320, 210, 25, "Torso #:");
+	rm_torso = new Fl_Input(425, 345, 210, 25, "Torso #:");
 	rm_torso->align(FL_ALIGN_LEFT);
 
-	Fl_Return_Button *rm_create = new Fl_Return_Button(425, 350, 120, 25, "Create");
+	rm_image = new Fl_Input(425, 375, 210, 25, "Image #:");
+	rm_image->align(FL_ALIGN_LEFT);
+
+	Fl_Button *rm_choose = new Fl_Button(425, 405, 210, 25, "Show Pics to Choose From");
+	rm_choose->callback((Fl_Callback *)show_model_images, 0);
+
+	Fl_Return_Button *rm_create = new Fl_Return_Button(425, 435, 120, 25, "Create");
 	rm_create->callback((Fl_Callback *)create_modelCB, 0);
 
-	Fl_Button *rm_cancel = new Fl_Button(560, 350, 60, 25, "Cancel");
+	Fl_Button *rm_cancel = new Fl_Button(560, 435, 60, 25, "Cancel");
 	rm_cancel->callback((Fl_Callback *)cancel_modelCB, 0);
 
 	models->end();
@@ -1392,7 +1444,7 @@ void create_modelCB(Fl_Widget* w, void* p) {
 	int loco = stoi(rm_loco->value());
 	int torso = stoi(rm_torso->value());
 
-	shoppe.make_model(head-1, arm-1, batt-1, loco-1, torso-1, rm_part_number->value(), rm_name->value());
+	shoppe.make_model(head-1, arm-1, batt-1, loco-1, torso-1, rm_part_number->value(), rm_name->value(), rm_image->value());
 
 	models->hide();
 }
@@ -1488,6 +1540,12 @@ void create_saCB(Fl_Widget* w, void* p) {
 	shoppe.add_sa(new SalesAssociate(sa_dlg->SA_name(), sa_dlg->sa_number()));
 
 	sa_dlg->hide();
+
+}
+
+void cancel_p(Fl_Widget* w, void* p) {
+
+	images->hide();
 
 }
 

@@ -68,6 +68,12 @@ void Shoppe::create_newpart(RobotPart* part, int type){
     }
 }
 
+string Shoppe::image_view(int i) {
+	string imagename = "";
+	imagename = robot_models[i].get_image() + ".jpg";
+	return imagename;
+}
+
 string Shoppe::all_parts() {
 	int i = 0;
 	string allParts = "";
@@ -237,7 +243,7 @@ int Shoppe::model_count() {
 	return robot_models.size();
 }
 
-void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name){
+void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, string mod_num, string mod_name, string image){
 
     int cost = 0;
 
@@ -247,7 +253,7 @@ void Shoppe::make_model(int type1, int type2, int type3, int type4, int type5, s
     cost += loco[type4]->get_cost();
     cost += torso[type5]->get_cost();
 
-    add_new_model(Robot_Model(mod_name, mod_num, cost), *head[type1], *arm[type2], *battery[type3], *loco[type4], *torso[type5]);
+    add_new_model(Robot_Model(mod_name, mod_num, image, cost), *head[type1], *arm[type2], *battery[type3], *loco[type4], *torso[type5]);
 
 }
 

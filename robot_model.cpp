@@ -57,12 +57,17 @@ double Robot_Model::get_price(){
     return price;
 }
 
+string Robot_Model::get_image() {
+	return image;
+}
+
 void Robot_Model:: save_alls() {
 
     ofstream ofs;
     ofs.open("data.txt", ofstream::out | ofstream::app);
 
         ofs << name << endl;
+		ofs << image << endl;
         ofs << model_num << endl;
         ofs << price << endl;
 
@@ -83,6 +88,7 @@ void Robot_Model::save_as_alls(string filename) {
 	ofs.open(filename.c_str(), ofstream::out | ofstream::app);
 
 	ofs << name << endl;
+	ofs << image << endl;
 	ofs << model_num << endl;
 	ofs << price << endl;
 
