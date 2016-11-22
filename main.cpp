@@ -61,6 +61,7 @@ int cust_Sales(Fl_Widget* w, void* p);
 int cust_orders(Fl_Widget* w, void* p);
 int showCatalog(Fl_Widget* w, void* p);
 void bill_orders();
+void give_raise();
 void create_modelCB(Fl_Widget* w, void* p);
 void cancel_modelCB(Fl_Widget* w, void* p);
 int createOrder(Fl_Widget* w, void* p);
@@ -73,7 +74,7 @@ int createModel(Fl_Widget* w, void* p);
 void view_manual();
 
 
-class Robot_Part_Dialog;
+//class Robot_Part_Dialog;
 class Head_Dialog;
 class Arm_Dialog;
 class Battery_Dialog;
@@ -94,7 +95,7 @@ Fl_Input *t1, *t2, *t3, *t4, *t5, *t6, *t7, *rm_part_number, *rm_name, *rm_head,
 View *view;
 Fl_Box *jpgbox;
 Fl_JPEG_Image *weljpg;
-Robot_Part_Dialog *rp_dlg;
+//Robot_Part_Dialog *rp_dlg;
 Head_Dialog *head_dlg;
 Arm_Dialog *arm_dlg;
 Battery_Dialog *batt_dlg;
@@ -410,25 +411,32 @@ int createOrder(Fl_Widget* w, void* p) {
 	}
 	ordertabs->end();
 
-	o_model_number = new Fl_Input(425, 30, 210, 25, "Model #:");
+	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 100);
+	disp2->buffer(buff2);
+	win->resizable(*disp2);
+	win->show();
+	buff2->text("Use the info in the tabs\nto get model, and customer\nnumbers. Create your own\norder number.Do not\nleave any fields empty.");
+
+	o_model_number = new Fl_Input(425, 160, 210, 25, "Model #:");
 	o_model_number->align(FL_ALIGN_LEFT);
 
-	o_cust = new Fl_Input(425, 60, 210, 25, "Cust Name:");
+	o_cust = new Fl_Input(425, 190, 210, 25, "Cust Name:");
 	o_cust->align(FL_ALIGN_LEFT);
 
-	o_cust_num = new Fl_Input(425, 90, 210, 25, "Cust #:");
+	o_cust_num = new Fl_Input(425, 220, 210, 25, "Cust #:");
 	o_cust_num->align(FL_ALIGN_LEFT);
 
-	o_sales = new Fl_Input(425, 120, 210, 25, "Associate #:");
+	o_sales = new Fl_Input(425, 250, 210, 25, "Associate #:");
 	o_sales->align(FL_ALIGN_LEFT);
 
-	o_num = new Fl_Input(425, 150, 210, 25, "Order #:");
+	o_num = new Fl_Input(425, 280, 210, 25, "Order #:");
 	o_num->align(FL_ALIGN_LEFT);
 
-	Fl_Return_Button *o_create = new Fl_Return_Button(425, 240, 120, 25, "Create");
+	Fl_Return_Button *o_create = new Fl_Return_Button(425, 310, 120, 25, "Create");
 	o_create->callback((Fl_Callback *)create_orderCB, 0);
 
-	Fl_Button *o_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	Fl_Button *o_cancel = new Fl_Button(560, 310, 60, 25, "Cancel");
 	o_cancel->callback((Fl_Callback *)cancel_orderCB, 0);
 
 	order->end();
@@ -484,33 +492,38 @@ int createModel(Fl_Widget* w, void* p) {
 
 	buff->text(testing);
 
+	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 100);
+	disp2->buffer(buff2);
+	win->resizable(*disp2);
+	win->show();
+	buff2->text("Use the info to the right to\nget the parts that you will\ninclude in this model.\nCreate a model #. Do not\nleave any fields empty.");
 
-
-	rm_part_number = new Fl_Input(425, 30, 210, 25, "Part #:");
+	rm_part_number = new Fl_Input(425, 140, 210, 25, "Model #:");
 	rm_part_number->align(FL_ALIGN_LEFT);
 
-	rm_name = new Fl_Input(425, 60, 210, 25, "Model Name:");
+	rm_name = new Fl_Input(425, 170, 210, 25, "Model Name:");
 	rm_name->align(FL_ALIGN_LEFT);
 
-	rm_head = new Fl_Input(425, 90, 210, 25, "Head #:");
+	rm_head = new Fl_Input(425, 200, 210, 25, "Head #:");
 	rm_head->align(FL_ALIGN_LEFT);
 
-	rm_arm = new Fl_Input(425, 120, 210, 25, "Arm #:");
+	rm_arm = new Fl_Input(425, 230, 210, 25, "Arm #:");
 	rm_arm->align(FL_ALIGN_LEFT);
 
-	rm_batt = new Fl_Input(425, 150, 210, 25, "Battery #:");
+	rm_batt = new Fl_Input(425, 260, 210, 25, "Battery #:");
 	rm_batt->align(FL_ALIGN_LEFT);
 
-	rm_loco = new Fl_Input(425, 180, 210, 25, "Locomotor #:");
+	rm_loco = new Fl_Input(425, 290, 210, 25, "Locomotor #:");
 	rm_loco->align(FL_ALIGN_LEFT);
 
-	rm_torso = new Fl_Input(425, 210, 210, 25, "Torso #:");
+	rm_torso = new Fl_Input(425, 320, 210, 25, "Torso #:");
 	rm_torso->align(FL_ALIGN_LEFT);
 
-	Fl_Return_Button *rm_create = new Fl_Return_Button(425, 240, 120, 25, "Create");
+	Fl_Return_Button *rm_create = new Fl_Return_Button(425, 350, 120, 25, "Create");
 	rm_create->callback((Fl_Callback *)create_modelCB, 0);
 
-	Fl_Button *rm_cancel = new Fl_Button(560, 240, 60, 25, "Cancel");
+	Fl_Button *rm_cancel = new Fl_Button(560, 350, 60, 25, "Cancel");
 	rm_cancel->callback((Fl_Callback *)cancel_modelCB, 0);
 
 	models->end();
@@ -1037,16 +1050,16 @@ int sa_Sales(Fl_Widget* w, void* p) {
 	buff->text(testing);
 
 	Fl_Text_Buffer *buff2 = new Fl_Text_Buffer();
-	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 75);
+	Fl_Text_Display *disp2 = new Fl_Text_Display(425, 30, 210, 120);
 	disp2->buffer(buff2);
 	win->resizable(*disp2);
 	win->show();
-	buff2->text("Enter the name and number\nof the Sales Associate you\nwish to view the orders of.");
+	buff2->text("Enter the name and number\nof the Sales Associate you\nwish to view the orders of.\nYou will be shown their\nprofit, and have the ability\nto give raises.");
 
-	sa_name2 = new Fl_Input(425, 125, 210, 25, "Name:");
+	sa_name2 = new Fl_Input(425, 160, 210, 25, "Name:");
 	sa_name2->align(FL_ALIGN_LEFT);
 
-	sa_num2 = new Fl_Input(425, 155, 210, 25, "Number:");
+	sa_num2 = new Fl_Input(425, 190, 210, 25, "Number:");
 	sa_num2->align(FL_ALIGN_LEFT);
 
 	Fl_Return_Button *view_saorder = new Fl_Return_Button(425, 240, 120, 25, "View Orders");
@@ -1062,8 +1075,8 @@ int sa_Sales(Fl_Widget* w, void* p) {
 }
 
 int sa_orders(Fl_Widget* w, void* p) {
-	const int X = 350;
-	const int Y = 500;
+	const int X = 400;
+	const int Y = 525;
 	const int border = 10;
 	int placement;
 
@@ -1090,6 +1103,12 @@ int sa_orders(Fl_Widget* w, void* p) {
 	win->resizable(*disp);
 	win->show();
 	buff->text(testing);
+
+	Fl_Return_Button *view_unpaid = new Fl_Return_Button(20, 475, 120, 25, "Give Raise");
+	view_unpaid->callback((Fl_Callback *)give_raise, 0);
+
+	Fl_Return_Button *closer = new Fl_Return_Button(150, 475, 120, 25, "Cancel");
+	view_unpaid->callback((Fl_Callback *)give_raise, 0);
 
 	// Wrap it up and let FLTK do its thing
 	saSales2->end();
@@ -1470,6 +1489,10 @@ void create_saCB(Fl_Widget* w, void* p) {
 
 	sa_dlg->hide();
 
+}
+
+void give_raise() {
+	saSales2->hide();
 }
 
 void SaveCB(Fl_Widget* w, void* p) {

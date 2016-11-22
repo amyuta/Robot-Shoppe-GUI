@@ -356,7 +356,7 @@ void Shoppe::paid_orders(int sa){
 
 string Shoppe::list_order(int sales_a){
     
-    int i = 0;
+    int i = 0, profit;
 	string order = "";
     
     while(i < orders.size()){
@@ -364,6 +364,10 @@ string Shoppe::list_order(int sales_a){
         order = order + orders[i]->list_order(sales_a) + "\n";
         i++;
     }
+
+	profit = 100 * i;
+
+	order = order + "\n" + "Total Profit: $" + to_string(profit);
 
 	return order;
 }
